@@ -1,4 +1,4 @@
-package com.example.getballsrolling
+package com.example.marboles
 
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -11,7 +11,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.Display
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
