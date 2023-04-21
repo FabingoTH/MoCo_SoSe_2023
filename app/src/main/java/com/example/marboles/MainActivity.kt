@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var sensorManager : SensorManager
     private lateinit var newBall : BallView
+    private lateinit var newWall : WallView
 
     // Das hier werden die Seiten über die der Ball nicht rauslaufen soll
     // Sieht bei mir aber noch nicht ganz richtig aus, kA schaut mal bei euch
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Hier kommt der BALL
         newBall = BallView(this, xMax, yMax)
         setContentView(newBall)
+
+        newWall = WallView(this, 100f, 200f, 125f, 50f)
     }
 
     override fun onStart() {
@@ -108,6 +111,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             ballY = newBallY
             invalidate() // Wahrscheinlich die wichtigste Funktion im Code
                         // Resettet die Grafik bei jedem Aufruf um die neue Position darzustellen
+        }
+    }
+
+    class WallView(context : Context, val left : Float, val top : Float, val right : Float, val bottom : Float) : View(context) {
+        val wallPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        init {
+            wallPaint.color = Color.GREEN
+            wallPaint.style = Paint.Style.STROKE
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            canvas.drawRect(left, top, right, bottom, wallPaint)
         }
     }
 

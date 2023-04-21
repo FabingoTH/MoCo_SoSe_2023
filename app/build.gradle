@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.getballsrolling'
+    namespace 'com.example.marboles'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.getballsrolling"
+        applicationId "com.example.marboles"
         minSdk 24
         targetSdk 33
         versionCode 1
