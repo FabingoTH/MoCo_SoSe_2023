@@ -2,9 +2,7 @@ package com.example.marboles
 
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -13,7 +11,9 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+
 
 var xPos = 0f
 var xVel = 0f
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var sensorManager : SensorManager
     private lateinit var newBall : BallView
-
+    private lateinit var newWall : WallView
 
     // Das hier werden die Seiten über die der Ball nicht rauslaufen soll
     // Sieht bei mir aber noch nicht ganz richtig aus, kA schaut mal bei euch
@@ -52,9 +52,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         xMax = width - 100f
         yMax = height - 100f
 
+        val frameLayout = FrameLayout(this)
         // Hier kommt der BALL
         newBall = BallView(this, xMax, yMax)
-        setContentView(newBall)
+        frameLayout.addView(newBall)
+
+        // Hier eine Wand zum testen
+        newWall = WallView(this, 250f, 100f, 300f, 450f)
+        frameLayout.addView(newWall)
+
+        setContentView(frameLayout)
     }
 
     override fun onStart() {
@@ -99,7 +106,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             super.onSizeChanged(w, h, oldw, oldh)
             screenWidth = xMax
             screenHeight = yMax
-            ballX = screenWidth / 2f // center Le Ball
+            ballX = screenWidth / 2f // Durch 2 = Mitte
             ballY = screenHeight / 2f
         }
 
@@ -109,6 +116,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             ballY = newBallY
             invalidate() // Wahrscheinlich die wichtigste Funktion im Code
                         // Resettet die Grafik bei jedem Aufruf um die neue Position darzustellen
+        }
+    }
+
+    class WallView(context : Context, val left : Float, val top : Float, val right : Float, val bottom : Float) : View(context) {
+        val wallPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        init {
+            wallPaint.color = Color.GREEN
+            wallPaint.style = Paint.Style.FILL
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            canvas.drawRect(left, top, right, bottom, wallPaint)
         }
     }
 
@@ -128,10 +148,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val newY = newBall.ballY + y * 5
 
                 // Ist der Ball noch im Screen? Sonst -> Do nothing
-                if (newX > 0 && newX < xMax && newY > 0 && newY < yMax) {
+                var inBounds = (newX > 0 && newX < xMax && newY > 0 && newY < yMax)
+                var noCollision = (!collisionDetected(newBall, newX, newY, newWall))
+
+                if (inBounds && noCollision) {
                     newBall.setBallCoordinates(newX, newY)
                 }
             }
         }
+    }
+
+    fun collisionDetected(view1 : View, x1 : Float, y1 : Float, view2 : View) : Boolean {
+	// Hier wird die "Hitbox" der Kreises als Quadrat abgespeichert damit wir es gleich mit der Wand vergleichen können
+        val rect1 = Rect()
+        view1.getHitRect(rect1)
+        rect1.offset(x1.toInt(), y1.toInt())
+
+	// Hier wird die "Hitbox" der Wand direkt als Boundbox abgespeichert
+	// Variable müsste vllcht nochmal umbenannt werden
+        val boundBox2 = Rect(newWall.left.toInt(), newWall.top.toInt(),
+                            newWall.right.toInt(), newWall.bottom.toInt())
+
+
+        return rect1.intersect(boundBox2)
     }
 }
