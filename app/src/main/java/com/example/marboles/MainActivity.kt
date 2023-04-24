@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.supportActionBar?.hide()
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
         // Sensor der die "Neig-Werte" dokumentiert
@@ -49,8 +50,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         var width = displayMetrics.widthPixels
         var height = displayMetrics.heightPixels
 
-        xMax = width - 100f
-        yMax = height - 100f
+        xMax = width - 50f
+        yMax = height - 50f
 
         val frameLayout = FrameLayout(this)
         // Hier kommt der BALL
@@ -148,8 +149,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val newY = newBall.ballY + y * 5
 
                 // Ist der Ball noch im Screen? Sonst -> Do nothing
-                var inBounds = (newX > 0 && newX < xMax && newY > 0 && newY < yMax)
+                var inBounds = (newX > 50 && newX < xMax && newY > 50 && newY < yMax)
                 var noCollision = (!collisionDetected(newBall, newX, newY, newWall))
+
+                // var collision = (collisionDetected(newBall, newX, newY, newWall)
+                // if(inBounds && !collision)
+                // macht es vielleicht ein bisschen verständlicher
 
                 if (inBounds && noCollision) {
                     newBall.setBallCoordinates(newX, newY)
@@ -159,16 +164,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun collisionDetected(view1 : View, x1 : Float, y1 : Float, view2 : View) : Boolean {
-	// Hier wird die "Hitbox" der Kreises als Quadrat abgespeichert damit wir es gleich mit der Wand vergleichen können
+	    // Hier wird die "Hitbox" der Kreises als Quadrat abgespeichert
+        // damit wir es gleich mit der Wand vergleichen können
         val rect1 = Rect()
         view1.getHitRect(rect1)
-        rect1.offset(x1.toInt(), y1.toInt())
+        rect1.offset(x1.toInt() - 50, y1.toInt() - 50)
 
-	// Hier wird die "Hitbox" der Wand direkt als Boundbox abgespeichert
-	// Variable müsste vllcht nochmal umbenannt werden
+	    // Hier wird die "Hitbox" der Wand direkt als Boundbox abgespeichert
+	    // Variable müsste vllcht nochmal umbenannt werden
+        // Notiz : Braucht man eine BoundBox oder kann man newWall direkt in intersect nutzen?
         val boundBox2 = Rect(newWall.left.toInt(), newWall.top.toInt(),
                             newWall.right.toInt(), newWall.bottom.toInt())
-
 
         return rect1.intersect(boundBox2)
     }
