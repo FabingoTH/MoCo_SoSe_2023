@@ -51,11 +51,12 @@ class MainActivity : ComponentActivity() {
 
             MarbolesTheme {
                 WoodImage()
-                //    Homescreen()
-                ScoreScreen()
+                Homescreen()
+                //ScoreScreen()
             }
         }
     }
+
 }
 
 @Composable
@@ -73,24 +74,21 @@ fun WoodImage() {
 fun Homescreen() {
     Row(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Green),
+            .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.7f)
-                .background(Color.Red),
+                .fillMaxHeight(0.7f),
             verticalArrangement = Arrangement.SpaceAround,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TitleText(title = "Marboles")
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .background(Color.Blue),
+                    .fillMaxWidth(0.5f),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                SimpleButton(label = "Start")
