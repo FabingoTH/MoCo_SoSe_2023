@@ -51,8 +51,8 @@ class MainActivity : ComponentActivity() {
 
             MarbolesTheme {
                 WoodImage()
-                Homescreen()
-                //ScoreScreen()
+                //Homescreen()
+                ScoreScreen()
             }
         }
     }
@@ -105,7 +105,7 @@ fun TitleText(title : String) {
     Box(
         modifier = Modifier
             .background(Color.White, RoundedCornerShape(100.dp))
-            .padding(50.dp, 12.dp)
+            .padding(50.dp, 20.dp)
     ) {
         Text(
             title.uppercase(),
@@ -149,21 +149,21 @@ fun ScoreScreen () {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .fillMaxHeight( 0.8f),
+                    .fillMaxHeight( 0.85f),
                 shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(50.dp,30.dp),
+                        .padding(100.dp,30.dp),
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp,0.dp,0.dp,30.dp),
+                            .padding(0.dp,30.dp,0.dp,50.dp),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "HIGHSCORES", color = Color.Black, fontSize = 50.sp, letterSpacing = 10.sp)
+                        Text(text = "HIGHSCORES", color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
                     }
 
                     Column(
@@ -171,9 +171,9 @@ fun ScoreScreen () {
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        ScoreEntry(spielerName = "Anouk", score = 1000)
-                        ScoreEntry(spielerName = "Phit", score = 800)
-                        ScoreEntry(spielerName = "Fabian", score = 700)
+                        ScoreEntry(spielerName = "Anouk", score = "00:30")
+                        ScoreEntry(spielerName = "Phit", score = "01:40")
+                        ScoreEntry(spielerName = "Fabian", score = "02:00")
                     }
                 }
             }
@@ -182,7 +182,7 @@ fun ScoreScreen () {
 }
 
 @Composable
-fun ScoreEntry(spielerName: String, score: Int) {
+fun ScoreEntry(spielerName: String, score: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
