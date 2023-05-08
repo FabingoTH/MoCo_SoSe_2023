@@ -5,26 +5,20 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -32,15 +26,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marboles.ui.theme.MarbolesTheme
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import com.example.marboles.ui.theme.MarbolesTheme
+
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
 
@@ -54,16 +54,38 @@ class MainActivity : ComponentActivity() {
             LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
             MarbolesTheme {
-
+                val navController = rememberNavController()
                 WoodImage()
-                //Homescreen()
-                //ScoreScreen()
-                //LevelChoiceScreen()
-                PauseScreen()
+
+                NavHost(navController = navController, startDestination = "home") {
+                    composable("home") { HomeScreen(navController) }
+                    composable("score") { ScoreScreen(navController) }
+                    composable("level") { LevelChoiceScreen(navController) }
+                    composable("pause") { PauseScreen(navController) }
+                }
+
+                // NAVIGATION FOR DEMONSTRATION
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(0.dp, 30.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                    Button(onClick = { navController.navigate("home") }) {
+                        Text(text = "Home", fontSize = 20.sp)
+                    }
+                    Button(onClick = { navController.navigate("score") }) {
+                        Text(text = "Score", fontSize = 20.sp)
+                    }
+                    Button(onClick = { navController.navigate("level") }) {
+                        Text(text = "level", fontSize = 20.sp)
+                    }
+                    Button(onClick = { navController.navigate("pause") }) {
+                        Text(text = "pause", fontSize = 20.sp)
+                    }
+                }
+
             }
         }
     }
-
 }
 
 @Composable
@@ -78,7 +100,7 @@ fun WoodImage() {
 
 // HOME
 @Composable
-fun Homescreen() {
+fun HomeScreen(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxSize(),
@@ -99,14 +121,12 @@ fun Homescreen() {
                     .padding(60.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-               SimpleButton(label = "Play")
-               SimpleButton(label = "Level")
+               NavigationButton(label = "Play", navController,"level")
+               NavigationButton(label = "Level", navController,"level")
             }
         }
     }
 }
-
-
 
 @Composable
 fun TitleText(title : String) {
@@ -128,9 +148,9 @@ fun TitleText(title : String) {
 }
 
 @Composable
-fun SimpleButton(label : String){
+fun NavigationButton(label : String, navController: NavController, screenName: String){
     Button(
-        onClick = {},
+        onClick = {navController.navigate(screenName)},
         elevation = ButtonDefaults.elevation(0.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
 
@@ -140,9 +160,8 @@ fun SimpleButton(label : String){
 }
 
 // SCORE
-
 @Composable
-fun ScoreScreen () {
+fun ScoreScreen (navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,7 +222,7 @@ fun ScoreEntry(spielerName: String, score: String) {
 
 // Levelauswahl
 @Composable
-fun LevelChoiceScreen () {
+fun LevelChoiceScreen (navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -271,7 +290,7 @@ fun MenuTitle(label : String) {
 
 
 @Composable
-fun PauseScreen() {
+fun PauseScreen(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
