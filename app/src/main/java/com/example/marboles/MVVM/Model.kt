@@ -12,7 +12,7 @@ import androidx.lifecycle.MutableLiveData
 
 class SensorModel (private val sensorManager : SensorManager) : SensorEventListener {
     private val accelerometerSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-    private val coordinates = Offset(500f, 300f)
+    private var coordinates = Offset(5f, 5f)
     // ^ Default Position scheint nicht zu funktionieren, deshalb random 500f und 300f.
     // Soll eigentlich Screen Mitte sein
 
@@ -28,9 +28,9 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
-            val x = event.values[1] * 5 // * 5 als TEST, scheint nichts großartig zu ändern
-            val y = event.values[0] * 5
-            val coordinates = coordinates + Offset(x, y)
+            val x = event.values[1] * 2 // * 2 wegen Geschwindigkeit, scheint mit Offset schneller?
+            val y = event.values[0] * 2
+            coordinates += Offset(x, y)
             _accelerometerData.value = coordinates
         }
     }
