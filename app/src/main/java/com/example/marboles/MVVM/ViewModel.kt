@@ -1,11 +1,9 @@
-package com.example.marboles
+package com.example.marboles.mvvm
 
 import android.content.Context
 import android.hardware.SensorManager
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 // VIEWMODEL

@@ -1,4 +1,4 @@
-package com.example.marboles
+package com.example.marboles.mvvm
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -12,6 +12,9 @@ import androidx.lifecycle.MutableLiveData
 
 class SensorModel (private val sensorManager : SensorManager) : SensorEventListener {
     private val accelerometerSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    private val coordinates = Offset(500f, 300f)
+    // ^ Default Position scheint nicht zu funktionieren, deshalb random 500f und 300f.
+    // Soll eigentlich Screen Mitte sein
 
     // Warum Init? Blicke nicht so ganz durch aber scheint zu funktionieren.
     init {
@@ -25,10 +28,9 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
-            // Negativ wegen Portait Mode zu Landscape Konvertierung
-            val x = -event.values[1]
-            val y = event.values[0]
-            val coordinates = Offset(x, y)
+            val x = event.values[1] * 5 // * 5 als TEST, scheint nichts großartig zu ändern
+            val y = event.values[0] * 5
+            val coordinates = coordinates + Offset(x, y)
             _accelerometerData.value = coordinates
         }
     }

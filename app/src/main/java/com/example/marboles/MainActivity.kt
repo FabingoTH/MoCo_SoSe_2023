@@ -4,12 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.DisplayMetrics
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -34,38 +29,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import com.example.marboles.ui.theme.MarbolesTheme
 
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import com.example.marboles.mvvm.BallScreen
+import com.example.marboles.mvvm.SensorViewModel
 
 class MainActivity : ComponentActivity() {
     var xMax = 0f
     var yMax = 0f
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Bildschirmgröße berechnen
-        var displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics) // Veraltet?
-        var width = displayMetrics.widthPixels
-        var height = displayMetrics.heightPixels
-
-        // Wozu berechnen wir jetzt die Größe des Displays? Ausserdem: Float? Dp?
-        xMax = width - 50f
-        yMax = height - 50f
+        val viewModel = SensorViewModel(this) // Funktioniert das...?
 
         super.onCreate(savedInstanceState)
 
@@ -84,6 +65,7 @@ class MainActivity : ComponentActivity() {
                     composable("score") { ScoreScreen(navController) }
                     composable("level") { LevelChoiceScreen(navController) }
                     composable("pause") { PauseScreen(navController) }
+                    composable("game") { BallScreen(navController, viewModel) }
                 }
 
                 // NAVIGATION FOR DEMONSTRATION
@@ -102,6 +84,9 @@ class MainActivity : ComponentActivity() {
                     }
                     Button(onClick = { navController.navigate("pause") }) {
                         Text(text = "pause", fontSize = 20.sp)
+                    }
+                    Button(onClick = { navController.navigate("game") }) {
+                        Text(text = "game", fontSize = 20.sp)
                     }
                 }
             }
