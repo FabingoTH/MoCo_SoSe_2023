@@ -4,12 +4,18 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -35,6 +41,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import com.example.marboles.ui.theme.MarbolesTheme
 
 import androidx.compose.ui.unit.dp
@@ -43,8 +54,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 class MainActivity : ComponentActivity() {
-
+    var xMax = 0f
+    var yMax = 0f
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Bildschirmgröße berechnen
+        var displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics) // Veraltet?
+        var width = displayMetrics.widthPixels
+        var height = displayMetrics.heightPixels
+
+        // Wozu berechnen wir jetzt die Größe des Displays? Ausserdem: Float? Dp?
+        xMax = width - 50f
+        yMax = height - 50f
+
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -82,7 +104,6 @@ class MainActivity : ComponentActivity() {
                         Text(text = "pause", fontSize = 20.sp)
                     }
                 }
-
             }
         }
     }
@@ -157,6 +178,18 @@ fun NavigationButton(label : String, navController: NavController, screenName: S
     {
         Text(text = label, color = Color.Black, fontSize = 30.sp)
     }
+}
+
+// BALL
+@Composable
+fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
+    Box(
+        modifier = modifier
+            .offset(coordinates.x.dp, coordinates.y.dp)
+            .size(50.dp)
+            .clip(CircleShape)
+            .background(Color.Red)
+    )
 }
 
 // SCORE
@@ -288,7 +321,6 @@ fun MenuTitle(label : String) {
     Text(text = label.uppercase(), color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
 }
 
-
 @Composable
 fun PauseScreen(navController: NavController) {
     Row(
@@ -381,7 +413,6 @@ fun PauseScreen(navController: NavController) {
         }
     }
 }
-
 
 @Composable
 fun LockScreenOrientation(orientation: Int) {
