@@ -8,13 +8,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-// MODEL
+// GAME VIEW
 
-class SensorModel (private val sensorManager : SensorManager) : SensorEventListener {
+class Sensor (private val sensorManager : SensorManager) : SensorEventListener {
     private val accelerometerSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-    private var coordinates = Offset(5f, 5f)
-    // ^ Default Position scheint nicht zu funktionieren, deshalb random 500f und 300f.
-    // Soll eigentlich Screen Mitte sein
+    // private var coordinates = Offset(playingFieldWidth / 2, playingFieldHeight / 2)
+    // Default- bzw. Startposition
 
     // Warum Init? Blicke nicht so ganz durch aber scheint zu funktionieren.
     init {
@@ -36,7 +35,7 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
     }
 
     // Brauchen wir in diesem Fall nicht
-    override fun onAccuracyChanged(p0: android.hardware.Sensor?, p1: Int) { }
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) { }
 
     fun unregisterListener() {
         sensorManager.unregisterListener(this)
