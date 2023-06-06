@@ -1,86 +1,73 @@
 package com.example.marboles.mvvm
 
+import android.content.res.Resources
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.NavController
+import kotlinx.coroutines.delay
 
-// Provisorische Größen
-val playingFieldWidth = 710.dp
-val playingFieldHeight = 330.dp
+// GAME VIEW
+class SensorHandler (private val sensorManager : SensorManager) : SensorEventListener {
+    private val accelerometerSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
-// GAMESCREEN
+    private val screenWidth = Resources.getSystem().displayMetrics.widthPixels // xMax
+    private val screenHeight = Resources.getSystem().displayMetrics.heightPixels // yMax
 
-@Composable
-fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
-    val ballCoordinates by viewModel.ballCoordinates.observeAsState(Offset.Zero)
+    var xTilt = 0f
+    var yTilt = 0f
 
-    // Konvertiere playingFieldHeight und Width zu Float um diese unten zu vergleichen
-    val widthToFloat = with(LocalDensity.current) { playingFieldWidth.toPx() }
-    val heightToFloat = with(LocalDensity.current) { playingFieldHeight.toPx() }
+    // Defaultposition, kann auch noch geändert werden
+    var coordinates = Offset(80f, 30f)
 
-    // Maximum Ball X und Y
-    val maxBallX = ballCoordinates.x.coerceIn(0f, widthToFloat)
-    val maxBallY = ballCoordinates.y.coerceIn(0f, heightToFloat)
+    init {
+        accelerometerSensor?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+        }
+        Resources.getSystem().displayMetrics.density
+    }
 
-    // Playing Field
-    Box(contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Transparent))
-    {
-        Box(modifier = Modifier
-            .size(width = playingFieldWidth, height = playingFieldHeight)
-            .border(BorderStroke(5.dp, Color.Black))
-            .background(Color.Transparent)
-        ) {
-            Ball(Modifier, ballCoordinates)
+    private val _accelerometerData = MutableLiveData<Offset>()
+    val accelerometerData: LiveData<Offset> = _accelerometerData // Read-only
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event != null) {
+            // Werte aus dem Sensor
+            xTilt = -event.values[1]
+            yTilt = -event.values[0]
+            updateCoordinates()
         }
     }
-}
 
-// BALL
-@Composable
-fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
-    Box(
-        modifier = modifier
-            .offset(coordinates.x.dp, coordinates.y.dp)
-            .size(50.dp)
-            .clip(CircleShape)
-            .background(Color.Red)
-    )
-}
+    private fun updateCoordinates() {
+        // Werte aus dem Sensor werden auf die alten Koordinaten addiert
+        var newX = coordinates.x
+        var newY = coordinates.y
 
-// WAND
-@Composable
-fun Wall(modifier : Modifier = Modifier, x : Dp, y : Dp, size : Dp) {
-    Box(
-        modifier = modifier
-            .offset(x, y)
-            .size(size)
-            .background(Color.Black)
-    )
+        val ballSpeed = 10
+        newX += xTilt * ballSpeed
+        newY += yTilt * ballSpeed
+
+        // Checks, ob der Ball noch im Feld ist
+        // Magische Nummern, Bound Check funktioniert aus irgendeinem Grund nur mit diesen Werten
+        if(newX < -345f){ newX = -345f }
+        if(newX > 345f){ newX = 345f }
+
+        if(newY < -155f){ newY = -155f }
+        if(newY > 155f){ newY = 155f }
+
+        coordinates = Offset(newX, newY)
+        _accelerometerData.value = coordinates
+    }
+
+    // Brauchen wir in diesem Fall nicht
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) { }
+
+    fun unregisterListener() {
+        sensorManager.unregisterListener(this)
+    }
 }

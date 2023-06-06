@@ -4,40 +4,66 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavController
 
-// GAME VIEW
+// GAMESCREEN
+@Composable
+fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
+    val ballCoordinates by viewModel.ballCoordinates.observeAsState(Offset.Zero)
 
-class Sensor (private val sensorManager : SensorManager) : SensorEventListener {
-    private val accelerometerSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-    // private var coordinates = Offset(playingFieldWidth / 2, playingFieldHeight / 2)
-    // Default- bzw. Startposition
-
-    // Warum Init? Blicke nicht so ganz durch aber scheint zu funktionieren.
-    init {
-        accelerometerSensor?.let {
-            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
-        }
+    // Playing Field = Screen Size
+    Box(contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Transparent))
+    {
+        Ball(Modifier, ballCoordinates)
+        Wall()
     }
+}
 
-    private val _accelerometerData = MutableLiveData<Offset>()
-    val accelerometerData: LiveData<Offset> = _accelerometerData // Read-only
+// BALL
+@Composable
+fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
+    Box(
+        modifier = modifier
+            .offset(coordinates.x.dp, coordinates.y.dp)
+            .size(50.dp)
+            .clip(CircleShape)
+            .background(Color.Red)
+    )
+}
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (event != null) {
-            val x = event.values[1] * 2 // * 2 wegen Geschwindigkeit, scheint mit Offset schneller?
-            val y = event.values[0] * 2
-            coordinates += Offset(x, y)
-            _accelerometerData.value = coordinates
-        }
-    }
-
-    // Brauchen wir in diesem Fall nicht
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) { }
-
-    fun unregisterListener() {
-        sensorManager.unregisterListener(this)
+// WAND
+@Composable
+fun Wall() {
+    Canvas( modifier = Modifier ) {
+        drawRect(
+            color = Color.Black,
+            size = Size(width = 50.dp.toPx(), height = 100.dp.toPx()),
+            topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
+        )
     }
 }

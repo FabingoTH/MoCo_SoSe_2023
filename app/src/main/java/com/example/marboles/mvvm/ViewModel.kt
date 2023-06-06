@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 
 class SensorViewModel(context : Context) : ViewModel() {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensorModel = Sensor(sensorManager)
+    private val sensorModel = SensorHandler(sensorManager)
 
     val ballCoordinates : LiveData<Offset> = sensorModel.accelerometerData
 }
