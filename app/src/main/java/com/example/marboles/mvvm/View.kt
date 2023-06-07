@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
+import com.example.marboles.R
 
 // GAMESCREEN
 @Composable
@@ -47,12 +48,14 @@ fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
 // BALL
 @Composable
 fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
-    Box(
-        modifier = modifier
+    Image(
+        modifier = Modifier
             .offset(coordinates.x.dp, coordinates.y.dp)
             .size(50.dp)
-            .clip(CircleShape)
-            .background(Color.Red)
+            .clip(CircleShape),
+        painter = painterResource(id = R.drawable.marble),
+        contentDescription = "Murmel",
+        contentScale = ContentScale.Fit
     )
 }
 
