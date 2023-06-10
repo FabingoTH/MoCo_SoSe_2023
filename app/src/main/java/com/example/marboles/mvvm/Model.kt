@@ -42,16 +42,13 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         if (event != null) {
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
-            // Werte aus dem Sensor
+            // Alte Art (Funktioniert... Manchmal)
             // xTilt = event.values[0]
             // yTilt = event.values[1]
 
-            // Werte aus dem Sensor
+            // Neue Art mit RotationsMatrix (Funktioniert immer aber komisch)
             xTilt = mRotationMatrix[1]
             yTilt = mRotationMatrix[0]
-
-            println("X ROLL: " + mRotationMatrix[0])
-            println("Y ROLL: " + mRotationMatrix[1])
 
             updateCoordinates()
         }
@@ -59,8 +56,8 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
 
     private fun updateCoordinates() {
         // Werte aus dem Sensor werden auf die alten Koordinaten addiert
-        var oldX = coordinates.x
-        var oldY = coordinates.y
+        val oldX = coordinates.x
+        val oldY = coordinates.y
 
         val ballSpeed = 10
         newX = oldX + xTilt * ballSpeed
@@ -78,6 +75,9 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         newX = collision.first
         newY = collision.second
 
+        println("OLD X : $oldX")
+        println("OLD Y : $oldY")
+
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
     }
@@ -87,9 +87,9 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         var newX = newXPos
         var newY = newYPos
 
-        val wallLeftX = 15f
+        val wallLeftX = 40f
         val wallRightX = 90f
-        val wallTopY = 140f
+        val wallTopY = 160f
         val wallBottomY = 60f
 
         val leftRightX = Range.create(wallLeftX, wallRightX)

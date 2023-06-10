@@ -1,15 +1,8 @@
 package com.example.marboles.mvvm
 
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import androidx.compose.foundation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -21,15 +14,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.example.marboles.R
 
@@ -45,7 +32,7 @@ fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
             .background(Color.Transparent))
     {
         Ball(Modifier, ballCoordinates)
-        Wall()
+        Wall(40f, 90f, 160f, 60f)
     }
 }
 
@@ -65,12 +52,17 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
 
 // WAND
 @Composable
-fun Wall() {
+fun Wall(left : Float, right : Float, top : Float, bottom : Float) {
     Canvas( modifier = Modifier ) {
+        val leftX = left
+        val rightX = right
+        val topY = top
+        val bottomY = bottom
+
         drawRect(
             color = Color.Black,
-            size = Size(width = 50.dp.toPx(), height = 100.dp.toPx()),
-            topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
+            size = Size(width = rightX - leftX, height = bottomY - topY),
+            topLeft = Offset(x = rightX, y = topY)
         )
     }
 }

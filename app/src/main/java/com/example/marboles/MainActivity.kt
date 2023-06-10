@@ -38,17 +38,36 @@ import androidx.compose.material.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import com.example.marboles.ui.theme.MarbolesTheme
-
 import androidx.core.view.WindowCompat
+import androidx.room.Room
+import com.example.marboles.database.Highscore
+import com.example.marboles.database.HighscoreDatabase
 import com.example.marboles.mvvm.BallScreen
 import com.example.marboles.mvvm.SensorViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     var xMax = 0f
     var yMax = 0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel = SensorViewModel(this) // Funktioniert das...?
 
+        // Datenbank Schabernack
+        val db = Room.databaseBuilder(
+            applicationContext,
+            HighscoreDatabase::class.java, "highscore"
+        ).build()
+
+        val highscoreDao = db.highscoreDao()
+
+        var scores = listOf<Highscore>()
+        // scores = highscoreDao.getHighscoresByHighest()
+        // highscoreDao.insertHighscore(sampleHighscore)
+
+        // FORCE FULLSCREEN
         window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -72,7 +91,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") { HomeScreen(navController) }
-                    composable("score") { ScoreScreen(navController) }
+                    composable("score") { ScoreScreen(navController, scores) }
                     composable("level") { LevelChoiceScreen(navController) }
                     composable("pause") { PauseScreen(navController) }
                     composable("game") { BallScreen(navController, viewModel) }
@@ -177,7 +196,7 @@ fun NavigationButton(label : String, navController: NavController, screenName: S
 
 // SCORE
 @Composable
-fun ScoreScreen (navController: NavController) {
+fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -214,9 +233,16 @@ fun ScoreScreen (navController: NavController) {
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        ScoreEntry(spielerName = "Anouk", score = "00:30")
-                        ScoreEntry(spielerName = "Phit", score = "01:40")
-                        ScoreEntry(spielerName = "Fabian", score = "02:00")
+                        if(highscoreList.isEmpty()){
+                            ScoreEntry(spielerName = "Falsch", score = "Belegh")
+                        } else {
+                            for(element in highscoreList){
+                                ScoreEntry(spielerName = element.date, score = element.score.toString())
+                            }
+                        }
+                        // ScoreEntry(spielerName = "Anouk", score = "00:30")
+                        // ScoreEntry(spielerName = "Phit", score = "01:40")
+                        // ScoreEntry(spielerName = "Fabian", score = "02:00")
                     }
                 }
             }
