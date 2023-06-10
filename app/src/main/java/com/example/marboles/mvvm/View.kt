@@ -41,7 +41,7 @@ fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
     {
         TextButton(
             modifier = Modifier.align(Alignment.TopStart).size(70.dp),
-            onClick = { navController.navigate("pause") }
+            onClick = { navController.navigate("gameover") }
         ) {
              Text(text = "ll", fontSize = 30.sp)
         }

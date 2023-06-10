@@ -129,6 +129,7 @@ class MainActivity : ComponentActivity() {
                     composable("level") { LevelChoiceScreen(navController) }
                     composable("pause") { PauseScreen(navController) }
                     composable("game") { BallScreen(navController, viewModel) }
+                    composable("gameover") { GameOverScreen(navController) }
                 }
 
                 // NAVIGATION FOR DEMONSTRATION
@@ -415,7 +416,7 @@ fun PauseScreen(navController: NavController) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                      Column() {
+                       Column() {
                           Row(
                               Modifier.fillMaxWidth(0.4f),
                               horizontalArrangement = Arrangement.SpaceBetween,
@@ -458,7 +459,47 @@ fun PauseScreen(navController: NavController) {
                               }
                           }
                           //Text(text = "Exit", fontSize = 30.sp)
-                      }
+                       }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GameOverScreen(navController : NavController) {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .fillMaxHeight(0.85f),
+                shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
+            ) {
+                Box (
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(100.dp, 30.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        MenuTitle(label = "Game Over!")
+                        Text("Your score", fontSize = 30.sp)
+                        // TODO: Hier kommt der Timer rein
                     }
                 }
             }
