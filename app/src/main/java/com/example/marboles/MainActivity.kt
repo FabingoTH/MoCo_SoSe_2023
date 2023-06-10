@@ -389,7 +389,6 @@ fun PauseScreen(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(100.dp, 30.dp),
                 ) {
                     Row(
                         modifier = Modifier
@@ -438,16 +437,16 @@ fun PauseScreen(navController: NavController) {
                                   onCheckedChange = { checkedState.value = it }
                               )
                           }
-                          Row (
-                              Modifier.fillMaxWidth(0.4f),
-                              horizontalArrangement = Arrangement.SpaceBetween,
-                              verticalAlignment =  Alignment.CenterVertically
-                          ){
-                              Button(modifier = Modifier.width(200.dp),
-                                  onClick = { navController.navigate("game") }) {
-                                  Text(text = "Continue", fontSize = 30.sp)
-                              }
-                          }
+                           Row {
+                               Button(modifier = Modifier.width(150.dp).height(70.dp).padding(10.dp),
+                                   onClick = {navController.navigate("game")}){
+                                   Text(text = "Continue", fontSize = 20.sp)
+                               }
+                               Button(modifier = Modifier.width(150.dp).height(70.dp).padding(10.dp),
+                                   onClick = {navController.navigate("home")}){
+                                   Text(text = "Home", fontSize = 20.sp)
+                               }
+                           }
                        }
                     }
                 }
