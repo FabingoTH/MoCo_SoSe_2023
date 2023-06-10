@@ -143,15 +143,6 @@ class MainActivity : ComponentActivity() {
                     Button(onClick = { navController.navigate("score") }) {
                         Text(text = "Score", fontSize = 20.sp)
                     }
-                    Button(onClick = { navController.navigate("level") }) {
-                        Text(text = "level", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("pause") }) {
-                        Text(text = "pause", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("game") }) {
-                        Text(text = "game", fontSize = 20.sp)
-                    }
                 }
             }
         }
@@ -275,9 +266,6 @@ fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) 
                                 ScoreEntry(datum = element.date, score = element.score.toString())
                             }
                         }
-                        // ScoreEntry(spielerName = "Anouk", score = "00:30")
-                        // ScoreEntry(spielerName = "Phit", score = "01:40")
-                        // ScoreEntry(spielerName = "Fabian", score = "02:00")
                     }
                 }
             }
@@ -454,11 +442,11 @@ fun PauseScreen(navController: NavController) {
                               horizontalArrangement = Arrangement.SpaceBetween,
                               verticalAlignment =  Alignment.CenterVertically
                           ){
-                              Button(onClick = { navController.navigate("game") }) {
+                              Button(modifier = Modifier.width(200.dp),
+                                  onClick = { navController.navigate("game") }) {
                                   Text(text = "Continue", fontSize = 30.sp)
                               }
                           }
-                          //Text(text = "Exit", fontSize = 30.sp)
                        }
                     }
                 }
@@ -500,6 +488,8 @@ fun GameOverScreen(navController : NavController) {
                         MenuTitle(label = "Game Over!")
                         Text("Your score", fontSize = 30.sp)
                         // TODO: Hier kommt der Timer rein
+                        Text("")
+                        Text("Sample Time", fontSize = 20.sp, color = Color(98,0,237,255))
                     }
                 }
             }
