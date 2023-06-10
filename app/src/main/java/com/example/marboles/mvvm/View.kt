@@ -69,7 +69,7 @@ fun Wall() {
     Canvas( modifier = Modifier ) {
         drawRect(
             color = Color.Black,
-            size = Size(width = 50.dp.toPx(), height = 100.dp.toPx()),
+            size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
             topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
         )
     }
