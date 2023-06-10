@@ -39,33 +39,67 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.marboles.database.Highscore
+import com.example.marboles.database.HighscoreDao
 import com.example.marboles.database.HighscoreDatabase
 import com.example.marboles.mvvm.BallScreen
 import com.example.marboles.mvvm.SensorViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
-    var xMax = 0f
-    var yMax = 0f
+
+    // Datenbank Zeugs
+    suspend fun getAllHighscores(dao : HighscoreDao) : List<Highscore>{
+        var allHighscores = listOf<Highscore>()
+        withContext(Dispatchers.IO) {
+            val highscores = dao.getHighscoresByHighest()
+            allHighscores = highscores
+        }
+        return allHighscores
+    }
+
+    suspend fun addHighscore(highscore : Highscore, dao : HighscoreDao) {
+        withContext(Dispatchers.IO) {
+            dao.insertHighscore(highscore)
+        }
+    }
+
+    suspend fun deleteAllHighscores(dao : HighscoreDao, highscores : List<Highscore>){
+        withContext(Dispatchers.IO) {
+            dao.deleteHighscores(highscores)
+        }
+    }
+
+    /*
+    suspend fun addSampleHighscore(dao : HighscoreDao) {
+        val highscore = Highscore(date = "10.06.2023", score = 30)
+        withContext(Dispatchers.IO) {
+            dao.insertHighscore(highscore)
+        }
+    }
+    */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel = SensorViewModel(this) // Funktioniert das...?
 
-        // Datenbank Schabernack
         val db = Room.databaseBuilder(
             applicationContext,
             HighscoreDatabase::class.java, "highscore"
         ).build()
 
         val highscoreDao = db.highscoreDao()
+        var highscores = listOf<Highscore>()
 
-        var scores = listOf<Highscore>()
-        // scores = highscoreDao.getHighscoresByHighest()
-        // highscoreDao.insertHighscore(sampleHighscore)
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                highscores = highscoreDao.getHighscoresByHighest()
+            }
+        }
 
         // FORCE FULLSCREEN
         window.decorView.systemUiVisibility = (
@@ -91,7 +125,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") { HomeScreen(navController) }
-                    composable("score") { ScoreScreen(navController, scores) }
+                    composable("score") { ScoreScreen(navController, highscores) }
                     composable("level") { LevelChoiceScreen(navController) }
                     composable("pause") { PauseScreen(navController) }
                     composable("game") { BallScreen(navController, viewModel) }
@@ -234,10 +268,10 @@ fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) 
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         if(highscoreList.isEmpty()){
-                            ScoreEntry(spielerName = "Falsch", score = "Belegh")
+                            ScoreEntry(datum = "Falsch", score = "Belegh")
                         } else {
                             for(element in highscoreList){
-                                ScoreEntry(spielerName = element.date, score = element.score.toString())
+                                ScoreEntry(datum = element.date, score = element.score.toString())
                             }
                         }
                         // ScoreEntry(spielerName = "Anouk", score = "00:30")
@@ -251,13 +285,13 @@ fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) 
 }
 
 @Composable
-fun ScoreEntry(spielerName: String, score: String) {
+fun ScoreEntry(datum: String, score: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = spielerName, color = Color.Black, fontSize = 30.sp)
+        Text(text = datum, color = Color.Black, fontSize = 30.sp)
         Text(text = score.toString(), color = Color.Black, fontSize = 30.sp)
     }
 }
