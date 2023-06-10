@@ -37,6 +37,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.font.FontWeight
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -486,10 +487,21 @@ fun GameOverScreen(navController : NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         MenuTitle(label = "Game Over!")
-                        Text("Your score", fontSize = 30.sp)
+                        Text("Your score", fontSize = 20.sp)
                         // TODO: Hier kommt der Timer rein
                         Text("")
-                        Text("Sample Time", fontSize = 20.sp, color = Color(98,0,237,255))
+                        Text("Sample Time", fontSize = 30.sp, color = Color(98,0,237,255))
+                        Text("")
+                        Row {
+                            Button(modifier = Modifier.width(150.dp).height(80.dp).padding(10.dp),
+                                onClick = {navController.navigate("home")}){
+                                Text(text = "Home", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Button(modifier = Modifier.width(150.dp).height(80.dp).padding(10.dp),
+                            onClick = {navController.navigate("game")}){
+                                Text(text = "Retry", fontSize = 22.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+                            }
+                        }
                     }
                 }
             }
