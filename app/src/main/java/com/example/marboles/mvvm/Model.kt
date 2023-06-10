@@ -75,9 +75,6 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         newX = collision.first
         newY = collision.second
 
-        println("OLD X : $oldX")
-        println("OLD Y : $oldY")
-
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
     }

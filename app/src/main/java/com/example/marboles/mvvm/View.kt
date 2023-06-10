@@ -5,6 +5,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -17,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.marboles.R
 
@@ -31,6 +39,13 @@ fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
             .fillMaxSize()
             .background(Color.Transparent))
     {
+        TextButton(
+            modifier = Modifier.align(Alignment.TopStart).size(70.dp),
+            onClick = { navController.navigate("pause") }
+        ) {
+             Text(text = "ll", fontSize = 30.sp)
+        }
+
         Ball(Modifier, ballCoordinates)
         Wall(40f, 90f, 160f, 60f)
     }

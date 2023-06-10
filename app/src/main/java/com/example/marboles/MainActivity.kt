@@ -156,7 +156,7 @@ fun HomeScreen(navController: NavController) {
                     .padding(60.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-               NavigationButton(label = "Play", navController,"level")
+               NavigationButton(label = "Play", navController,"game")
                NavigationButton(label = "Level", navController,"level")
             }
         }
@@ -413,6 +413,15 @@ fun PauseScreen(navController: NavController) {
                                   checked = checkedState.value,
                                   onCheckedChange = { checkedState.value = it }
                               )
+                          }
+                          Row (
+                              Modifier.fillMaxWidth(0.4f),
+                              horizontalArrangement = Arrangement.SpaceBetween,
+                              verticalAlignment =  Alignment.CenterVertically
+                          ){
+                              Button(onClick = { navController.navigate("game") }) {
+                                  Text(text = "Continue", fontSize = 30.sp)
+                              }
                           }
                           //Text(text = "Exit", fontSize = 30.sp)
                       }
