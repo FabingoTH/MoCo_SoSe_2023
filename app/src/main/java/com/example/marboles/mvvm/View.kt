@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -74,3 +75,14 @@ fun Wall() {
         )
     }
 }
+
+
+@Composable
+fun Goal(){
+    Canvas(modifier = Modifier.fillMaxSize()) {
+    translate(left = 70f, top = 80f) {
+        drawCircle(Color.Blue, radius = 25.dp.toPx())
+    }
+    }
+}
+
