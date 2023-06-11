@@ -35,37 +35,72 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.marboles.database.Highscore
+import com.example.marboles.database.HighscoreDao
 import com.example.marboles.database.HighscoreDatabase
-import com.example.marboles.mvvm.BallScreen
-import com.example.marboles.mvvm.SensorViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.example.marboles.mvvm.*
+import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
-    var xMax = 0f
-    var yMax = 0f
+    // Datenbank Zeugs
+    suspend fun getAllHighscores(dao : HighscoreDao) : List<Highscore>{
+        var allHighscores = listOf<Highscore>()
+        withContext(Dispatchers.IO) {
+            val highscores = dao.getHighscoresByHighest()
+            allHighscores = highscores
+        }
+        return allHighscores
+    }
+
+    suspend fun addHighscore(highscore : Highscore, dao : HighscoreDao) {
+        withContext(Dispatchers.IO) {
+            dao.insertHighscore(highscore)
+        }
+    }
+
+    suspend fun deleteAllHighscores(dao : HighscoreDao, highscores : List<Highscore>){
+        withContext(Dispatchers.IO) {
+            dao.deleteHighscores(highscores)
+        }
+    }
+
+    /*
+    suspend fun addSampleHighscore(dao : HighscoreDao) {
+        val highscore = Highscore(date = "10.06.2023", score = 30)
+        withContext(Dispatchers.IO) {
+            dao.insertHighscore(highscore)
+        }
+    }
+    */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel = SensorViewModel(this) // Funktioniert das...?
+        val levelViewModel = LevelViewModel(this)
 
-        // Datenbank Schabernack
         val db = Room.databaseBuilder(
             applicationContext,
             HighscoreDatabase::class.java, "highscore"
         ).build()
 
         val highscoreDao = db.highscoreDao()
+        var highscores = listOf<Highscore>()
 
-        var scores = listOf<Highscore>()
-        // scores = highscoreDao.getHighscoresByHighest()
-        // highscoreDao.insertHighscore(sampleHighscore)
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                highscores = highscoreDao.getHighscoresByHighest()
+            }
+        }
 
         // FORCE FULLSCREEN
         window.decorView.systemUiVisibility = (
@@ -89,39 +124,26 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 WoodImage()
 
-                NavHost(navController = navController, startDestination = "home") {
-                    composable("home") { HomeScreen(navController) }
-                    composable("score") { ScoreScreen(navController, scores) }
-                    composable("level") { LevelChoiceScreen(navController) }
-                    composable("pause") { PauseScreen(navController) }
-                    composable("game") { BallScreen(navController, viewModel) }
-                }
-
-                // NAVIGATION FOR DEMONSTRATION
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(0.dp, 30.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Button(onClick = { navController.navigate("home") }) {
-                        Text(text = "Home", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("score") }) {
-                        Text(text = "Score", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("level") }) {
-                        Text(text = "level", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("pause") }) {
-                        Text(text = "pause", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("game") }) {
-                        Text(text = "game", fontSize = 20.sp)
+                CompositionLocalProvider(LocalNavController provides navController) {
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") { HomeScreen() }
+                        composable("score") { ScoreScreen(highscores) }
+                        composable("level") { LevelChoiceScreen(levelViewModel) }
+                        composable("pause") {
+                            PauseScreen(
+                                remember { mutableStateOf(false) })
+                        }
+                        composable("game") { BallScreen(viewModel) }
+                        composable("gameover") { GameOverScreen() }
                     }
                 }
             }
         }
     }
 }
+
+// Init Local NavController
+val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 
 @Composable
 fun WoodImage() {
@@ -135,7 +157,10 @@ fun WoodImage() {
 
 // HOME
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen() {
+
+    val navController = LocalNavController.current
+
     Row(
         modifier = Modifier
             .fillMaxSize(),
@@ -156,8 +181,8 @@ fun HomeScreen(navController: NavController) {
                     .padding(60.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-               NavigationButton(label = "Play", navController,"level")
-               NavigationButton(label = "Level", navController,"level")
+               NavigationButton(label = "Play", navController,"game")
+               NavigationButton(label = "Level", navController, "level")
             }
         }
     }
@@ -183,9 +208,10 @@ fun TitleText(title : String) {
 }
 
 @Composable
-fun NavigationButton(label : String, navController: NavController, screenName: String){
+fun NavigationButton(label : String,navController: NavController?, screenName: String){
+
     Button(
-        onClick = {navController.navigate(screenName)},
+        onClick = {navController?.navigate(screenName)},
         elevation = ButtonDefaults.elevation(0.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
 
@@ -196,7 +222,8 @@ fun NavigationButton(label : String, navController: NavController, screenName: S
 
 // SCORE
 @Composable
-fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) {
+fun ScoreScreen ( highscoreList : List<Highscore>) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -234,15 +261,12 @@ fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) 
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         if(highscoreList.isEmpty()){
-                            ScoreEntry(spielerName = "Falsch", score = "Belegh")
+                            ScoreEntry(datum = "Falsch", score = "Belegh")
                         } else {
                             for(element in highscoreList){
-                                ScoreEntry(spielerName = element.date, score = element.score.toString())
+                                ScoreEntry(datum = element.date, score = element.score.toString())
                             }
                         }
-                        // ScoreEntry(spielerName = "Anouk", score = "00:30")
-                        // ScoreEntry(spielerName = "Phit", score = "01:40")
-                        // ScoreEntry(spielerName = "Fabian", score = "02:00")
                     }
                 }
             }
@@ -251,20 +275,25 @@ fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) 
 }
 
 @Composable
-fun ScoreEntry(spielerName: String, score: String) {
+fun ScoreEntry(datum: String, score: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = spielerName, color = Color.Black, fontSize = 30.sp)
+        Text(text = datum, color = Color.Black, fontSize = 30.sp)
         Text(text = score.toString(), color = Color.Black, fontSize = 30.sp)
     }
 }
 
 // Levelauswahl
 @Composable
-fun LevelChoiceScreen (navController: NavController) {
+fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
+    val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
+
+    val navController = LocalNavController.current
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -301,27 +330,36 @@ fun LevelChoiceScreen (navController: NavController) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(
-
-                            buildAnnotatedString {
-                            withStyle(
-                                style = SpanStyle(
-                                    color = Color.Black,
-                                )
-                            ) {
-                                append("1 ")
-                            }
-                            append("2 3 4 5 6")
-
-                        },
-                            fontSize = 30.sp,
-                            color = Color.Gray,
-                            letterSpacing = 15.sp,
-                        )
+                        levelStatusList.forEach { levelStatus ->
+                            LevelButton(
+                                levelStatus = levelStatus,
+                                onLevelClicked = { /* Implementieren Sie die Logik für den Klick auf einen Level-Button */ }
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun LevelButton(
+    levelStatus: LevelStatus,
+    onLevelClicked: () -> Unit
+) {
+    val textColor = if (levelStatus.isUnlocked) Color.Black else Color.LightGray
+    TextButton(
+        onClick = onLevelClicked,
+        modifier = Modifier,
+        enabled = levelStatus.isUnlocked
+    ) {
+        Text(
+            text = "${levelStatus.levelNumber}",
+            fontSize = 20.sp,
+            color = textColor
+        )
     }
 }
 
@@ -330,8 +368,68 @@ fun MenuTitle(label : String) {
     Text(text = label.uppercase(), color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
 }
 
+
 @Composable
-fun PauseScreen(navController: NavController) {
+fun TopBar() {
+
+    val navController = LocalNavController.current
+
+    // Timer-logic
+    val isPaused = remember { mutableStateOf(false) }
+    val time = remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) { // Coroutine starten
+        while (true) {
+            delay(1000) // Verzögerung von 1 Sekunde
+
+            if (!isPaused.value) {
+                time.value++
+            }
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Transparent)
+            .padding(50.dp, 15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row() {
+            TextButton(onClick = { isPaused.value = !isPaused.value }) {
+                Text(text = "ll", fontSize = 20.sp,)
+            }
+            TextButton(onClick = {navController?.navigate("home") }) {
+                Text(text = "Home", fontSize = 20.sp)
+            }
+            TextButton(onClick = { navController?.navigate("score") }
+            ) {
+                Text(text = "Highscore", fontSize = 20.sp)
+            }
+            TextButton(onClick = { navController?.navigate("gameover") }
+            ) {
+                Text(text = "Kill", fontSize = 20.sp)
+            }
+        }
+        Text(text = "Timer: ${formatTimer(time.value)}", fontSize = 20.sp)
+    }
+
+    if (isPaused.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            PauseScreen(isPaused = isPaused)
+        }
+    }
+}
+
+@Composable
+fun PauseScreen(isPaused: MutableState<Boolean>) {
+
+    val navController = LocalNavController.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -343,19 +441,7 @@ fun PauseScreen(navController: NavController) {
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(50.dp, 15.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row() {
-                    Text(text = "ll", fontSize = 20.sp)
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Text(text = "Level", fontSize = 20.sp)
-                }
-                Text(text = "Time: 00:49", fontSize = 20.sp)
-            }
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -381,7 +467,7 @@ fun PauseScreen(navController: NavController) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                      Column() {
+                       Column() {
                           Row(
                               Modifier.fillMaxWidth(0.4f),
                               horizontalArrangement = Arrangement.SpaceBetween,
@@ -414,8 +500,51 @@ fun PauseScreen(navController: NavController) {
                                   onCheckedChange = { checkedState.value = it }
                               )
                           }
-                          //Text(text = "Exit", fontSize = 30.sp)
-                      }
+                       }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GameOverScreen() {
+    val navController = LocalNavController.current
+
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .fillMaxHeight(0.85f),
+                shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
+            ) {
+                Box (
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(100.dp, 30.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        MenuTitle(label = "Game Over!")
+                        Text("Your score", fontSize = 30.sp)
+                        // TODO: Hier kommt der Timer rein
+                        Text("")
+                        Text("Sample Time", fontSize = 20.sp, color = Color(98,0,237,255))
                     }
                 }
             }
