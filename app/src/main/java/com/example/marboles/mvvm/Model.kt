@@ -46,15 +46,12 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
             // Werte aus dem Sensor
-            xTilt = event.values[0]
-            yTilt = -event.values[1]
+            // xTilt = event.values[0]
+            // yTilt = -event.values[1]
 
             // Werte aus dem Sensor
-            // xTilt = mRotationMatrix[1]
-            // yTilt = mRotationMatrix[0]
-
-            println("X ROLL: " + mRotationMatrix[0])
-            println("Y ROLL: " + mRotationMatrix[1])
+            xTilt = mRotationMatrix[1]
+            yTilt = mRotationMatrix[0]
 
             updateCoordinates()
         }
@@ -62,8 +59,8 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
 
     private fun updateCoordinates() {
         // Werte aus dem Sensor werden auf die alten Koordinaten addiert
-        var oldX = coordinates.x
-        var oldY = coordinates.y
+        val oldX = coordinates.x
+        val oldY = coordinates.y
 
         val ballSpeed = 15
         newX = oldX + xTilt * ballSpeed
@@ -85,24 +82,36 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             newY = 155f
         }
 
-        val collision = checkCollision(oldX, oldY, newX, newY)
-        newX = collision.first
-        newY = collision.second
+        // Loopen durch alle Wände
+        var collision : Pair<Float, Float>
+        for(wall in walls){
+            collision = checkCollision(oldX, oldY, newX, newY, wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY)
+            newX = collision.first
+            newY = collision.second
+        }
 
+        // Neue Koordinaten festlegen
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
     }
 
-
-    private fun checkCollision(oldX: Float, oldY: Float, newXPos: Float, newYPos: Float)
-            : Pair<Float, Float> {
+    private fun checkCollision(
+        oldX: Float,
+        oldY: Float,
+        newXPos: Float,
+        newYPos: Float,
+        wallLeft : Float,
+        wallRight : Float,
+        wallTop: Float,
+        wallBottom: Float
+    ) : Pair<Float, Float> {
         var newX = newXPos
         var newY = newYPos
 
-        val wallLeftX = 40f - ballRadius
-        val wallRightX = 90f + ballRadius
-        val wallTopY = 110f + ballRadius
-        val wallBottomY = 60f - ballRadius
+        val wallLeftX = wallLeft - ballRadius
+        val wallRightX = wallRight + ballRadius
+        val wallTopY = wallTop + ballRadius
+        val wallBottomY = wallBottom - ballRadius
 
         val leftRightX = Range.create(wallLeftX, wallRightX)
         val topBottomY = Range.create(wallBottomY, wallTopY)
@@ -125,7 +134,6 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
                 newY = wallBottomY
             }
         }
-
         return Pair(newX, newY)
     }
 
@@ -137,35 +145,12 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         sensorManager.unregisterListener(this)
     }
 
-    class Wall(
-        val wallLeftX: Float,
-        val wallRightX: Float,
-        val wallTopY: Float,
-        val wallBottomY: Float
-    ) {
-    }
-
-    val wall1: Wall = Wall(15f, 20f, 40f, 60f)
-    val wall2: Wall = Wall(50f, 60f, 70f, 120f)
-    val wall3: Wall = Wall(40f, 60f, 30f, 50f)
-
-    private val walls = listOf(
-        Wall(15f, 20f, 40f, 60f),
-        Wall(50f, 60f, 70f, 120f),
-        Wall(40f, 60f, 30f, 50f)
-    )
-
-    private fun getWallValue() {
-        for (wall in walls) {
-            // Zugriff auf die Werte der aktuellen Wand
-            val wallLeftX = wall.wallLeftX
-            val wallRightX = wall.wallRightX
-            val wallTopY = wall.wallTopY
-            val wallBottomY = wall.wallBottomY
-        }
-    }
-
     // neue Funktion checkCollisions, nicht fertig
+    // Kommentar hier: Ich denke wenn du die Funktion checkCollision so hast wie oben,
+    // dann brauchst du diese Funktion hier eigentlich nicht mehr. Ich lass sie aber
+    // vorsichtshalber mal drin weil ich nicht 100% weiß was du damit vorhattest
+
+    /*
     private fun checkCollisions(oldX: Float, oldY: Float, newXPos: Float, newYPos: Float): Pair<Float, Float> {
         for (wall in walls) {
             var newX = newXPos
@@ -191,11 +176,11 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
                 if (oldY <= wall.wallBottomY && topBottomY.contains(newY)) {
                     newY = wall.wallBottomY
                 }
-
-            } return Pair(newX, newY)
-
+            }
         }
+        return Pair(newX, newY)
     }
+    */
 }
 
 
