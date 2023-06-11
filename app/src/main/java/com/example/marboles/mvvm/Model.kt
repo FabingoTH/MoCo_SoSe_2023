@@ -65,7 +65,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         var oldX = coordinates.x
         var oldY = coordinates.y
 
-        val ballSpeed = 20
+        val ballSpeed = 15
         newX = oldX + xTilt * ballSpeed
         newY = oldY + yTilt * ballSpeed
 
@@ -93,12 +93,11 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         _accelerometerData.value = coordinates
     }
 
+
     private fun checkCollision(oldX: Float, oldY: Float, newXPos: Float, newYPos: Float)
             : Pair<Float, Float> {
         var newX = newXPos
         var newY = newYPos
-
-        getWallValue()
 
         val wallLeftX = 40f - ballRadius
         val wallRightX = 90f + ballRadius
@@ -130,6 +129,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         return Pair(newX, newY)
     }
 
+
     // Brauchen wir in diesem Fall nicht
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 
@@ -137,7 +137,12 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         sensorManager.unregisterListener(this)
     }
 
-    class Wall(val wallLeftX: Float, val wallRightX: Float, val wallTopY: Float, val wallBottomY: Float) {
+    class Wall(
+        val wallLeftX: Float,
+        val wallRightX: Float,
+        val wallTopY: Float,
+        val wallBottomY: Float
+    ) {
     }
 
     val wall1: Wall = Wall(15f, 20f, 40f, 60f)
@@ -150,7 +155,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         Wall(40f, 60f, 30f, 50f)
     )
 
-    fun getWallValue() {
+    private fun getWallValue() {
         for (wall in walls) {
             // Zugriff auf die Werte der aktuellen Wand
             val wallLeftX = wall.wallLeftX
@@ -159,4 +164,38 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             val wallBottomY = wall.wallBottomY
         }
     }
+
+    // neue Funktion checkCollisions, nicht fertig
+    private fun checkCollisions(oldX: Float, oldY: Float, newXPos: Float, newYPos: Float): Pair<Float, Float> {
+        for (wall in walls) {
+            var newX = newXPos
+            var newY = newYPos
+
+            val leftRightX = Range.create(wall.wallLeftX, wall.wallRightX)
+            val topBottomY = Range.create(wall.wallBottomY, wall.wallTopY)
+
+            if (leftRightX.contains(newX) && topBottomY.contains(newY)) {
+                // Links box check für x musste ich auf 15f ändern für meinen screen
+                if (oldX <= wall.wallLeftX && leftRightX.contains(newX)) {
+                    newX = wall.wallLeftX
+                }
+                // Rechts box check für x
+                if (oldX >= wall.wallRightX && leftRightX.contains(newX)) {
+                    newX = wall.wallRightX
+                }
+                // Oben box check für y
+                if (oldY >= wall.wallTopY && topBottomY.contains(newY)) {
+                    newY = wall.wallTopY
+                }
+                // Unten check für y, musste ich auf 150 für meinen screen ändern
+                if (oldY <= wall.wallBottomY && topBottomY.contains(newY)) {
+                    newY = wall.wallBottomY
+                }
+
+            } return Pair(newX, newY)
+
+        }
+    }
 }
+
+

@@ -80,8 +80,8 @@ fun Wall() {
 @Composable
 fun Goal(){
     Canvas(modifier = Modifier.fillMaxSize()) {
-    translate(left = 70f, top = 80f) {
-        drawCircle(Color.Blue, radius = 25.dp.toPx())
+    translate(left = 110f, top = 50f) {
+        drawCircle(Color.Red, radius = 25.dp.toPx())
     }
     }
 }
