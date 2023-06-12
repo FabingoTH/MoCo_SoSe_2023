@@ -21,6 +21,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,10 +48,20 @@ fun BallScreen(viewModel : SensorViewModel) {
             .fillMaxSize()
             .background(Color.Transparent))
     {
-
-
+        Goal()
         Ball(Modifier, ballCoordinates)
-        Wall(40f, 90f, 160f, 60f)
+        WallView()
+
+
+    }
+}
+
+@Composable
+fun Goal(){
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        translate(left = 250f, top = 200f) {
+            drawCircle(Color.DarkGray, radius = 30.dp.toPx())
+        }
     }
 }
 
@@ -69,17 +81,33 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
 
 // WAND
 @Composable
-fun Wall(left : Float, right : Float, top : Float, bottom : Float) {
+fun WallView() {
     Canvas( modifier = Modifier ) {
-        val leftX = left
-        val rightX = right
-        val topY = top
-        val bottomY = bottom
 
+        // OG Wand
         drawRect(
             color = Color.Black,
-            size = Size(width = rightX - leftX, height = bottomY - topY),
-            topLeft = Offset(x = rightX, y = topY)
+            size = Size(width = 50.dp.toPx(), height = 150.dp.toPx()),
+            topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
+        )
+        drawRect(
+            color = Color.Red,
+            size = Size(width = 250.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = 40.dp.toPx(), y = 10.dp.toPx())
+        )
+        drawRect(
+            color = Color.Blue,
+            size = Size(width = 290.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = -200.dp.toPx(), y = -40.dp.toPx())
+        )
+        drawRect(
+            color = Color.Green,
+            size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = -160.dp.toPx(), y = 70.dp.toPx())
         )
     }
 }
+
+
+
+

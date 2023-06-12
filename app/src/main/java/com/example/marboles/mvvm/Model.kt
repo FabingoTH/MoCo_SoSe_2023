@@ -12,10 +12,13 @@ import androidx.lifecycle.MutableLiveData
 
 // GAME VIEW
 class SensorHandler (private val sensorManager : SensorManager) : SensorEventListener {
-    private val accelerometerSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+    private val accelerometerSensor: Sensor? =
+        sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
     private val screenWidth = Resources.getSystem().displayMetrics.widthPixels // xMax
     private val screenHeight = Resources.getSystem().displayMetrics.heightPixels // yMax
+
+    var ballRadius = 25f
 
     var xTilt = 0f
     var yTilt = 0f
@@ -42,13 +45,13 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         if (event != null) {
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
-            // Alte Art (Funktioniert... Manchmal)
-            // xTilt = event.values[0]
-            // yTilt = event.values[1]
+            // Werte aus dem Sensor
+             // xTilt = event.values[0]
+             // yTilt = -event.values[1]
 
-            // Neue Art mit RotationsMatrix (Funktioniert immer aber komisch)
-            xTilt = mRotationMatrix[1]
-            yTilt = mRotationMatrix[0]
+            // Werte aus dem Sensor
+              xTilt = mRotationMatrix[1]
+              yTilt = mRotationMatrix[0]
 
             updateCoordinates()
         }
@@ -59,65 +62,88 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         val oldX = coordinates.x
         val oldY = coordinates.y
 
-        val ballSpeed = 10
+        val ballSpeed = 15
         newX = oldX + xTilt * ballSpeed
         newY = oldY + yTilt * ballSpeed
 
         // Checks, ob der Ball noch im Feld ist
         // Magische Nummern, Bound Check funktioniert aus irgendeinem Grund nur mit diesen Werten
-        if(newX < -345f){ newX = -345f }
-        if(newX > 345f){ newX = 345f }
+        if (newX < -345f) {
+            newX = -345f
+        }
+        if (newX > 345f) {
+            newX = 345f
+        }
 
-        if(newY < -155f){ newY = -155f }
-        if(newY > 155f){ newY = 155f }
+        if (newY < -155f) {
+            newY = -155f
+        }
+        if (newY > 155f) {
+            newY = 155f
+        }
 
-        val collision = checkCollision(oldX, oldY, newX, newY)
-        newX = collision.first
-        newY = collision.second
+        // Loopen durch alle Wände
+        var collision : Pair<Float, Float>
+        for(wall in walls){
+            collision = checkCollision(oldX, oldY, newX, newY, wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY)
+            newX = collision.first
+            newY = collision.second
+        }
 
+        // Neue Koordinaten festlegen
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
     }
 
-    private fun checkCollision(oldX : Float, oldY : Float, newXPos : Float, newYPos : Float)
-    : Pair<Float, Float> {
+    private fun checkCollision(
+        oldX: Float,
+        oldY: Float,
+        newXPos: Float,
+        newYPos: Float,
+        wallLeft : Float,
+        wallRight : Float,
+        wallTop: Float,
+        wallBottom: Float
+    ) : Pair<Float, Float> {
         var newX = newXPos
         var newY = newYPos
 
-        val wallLeftX = 40f
-        val wallRightX = 90f
-        val wallTopY = 160f
-        val wallBottomY = 60f
+        val wallLeftX = wallLeft - ballRadius
+        val wallRightX = wallRight + ballRadius
+        val wallTopY = wallTop + ballRadius
+        val wallBottomY = wallBottom - ballRadius
 
         val leftRightX = Range.create(wallLeftX, wallRightX)
         val topBottomY = Range.create(wallBottomY, wallTopY)
 
-        if(leftRightX.contains(newX) && topBottomY.contains(newY)){
+        if (leftRightX.contains(newX) && topBottomY.contains(newY)) {
             // Links box check für x musste ich auf 15f ändern für meinen screen
-            if(oldX <= wallLeftX && leftRightX.contains(newX)){
+            if (oldX <= wallLeftX && leftRightX.contains(newX)) {
                 newX = wallLeftX
             }
             // Rechts box check für x
-            if(oldX >= wallRightX && leftRightX.contains(newX)){
+            if (oldX >= wallRightX && leftRightX.contains(newX)) {
                 newX = wallRightX
             }
             // Oben box check für y
-            if(oldY >= wallTopY && topBottomY.contains(newY)){
+            if (oldY >= wallTopY && topBottomY.contains(newY)) {
                 newY = wallTopY
             }
             // Unten check für y, musste ich auf 150 für meinen screen ändern
-            if(oldY <= wallBottomY && topBottomY.contains(newY)){
+            if (oldY <= wallBottomY && topBottomY.contains(newY)) {
                 newY = wallBottomY
             }
         }
-
         return Pair(newX, newY)
     }
 
+
     // Brauchen wir in diesem Fall nicht
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) { }
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 
     fun unregisterListener() {
         sensorManager.unregisterListener(this)
     }
 }
+
+
