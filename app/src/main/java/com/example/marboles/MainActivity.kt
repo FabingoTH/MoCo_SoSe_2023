@@ -39,6 +39,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -50,10 +53,10 @@ import com.example.marboles.mvvm.BallScreen
 import com.example.marboles.mvvm.LevelStatus
 import com.example.marboles.mvvm.LevelViewModel
 import com.example.marboles.mvvm.SensorViewModel
+import com.example.marboles.mvvm.*
 import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
-
     // Datenbank Zeugs
     suspend fun getAllHighscores(dao : HighscoreDao) : List<Highscore>{
         var allHighscores = listOf<Highscore>()
@@ -125,22 +128,18 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 WoodImage()
 
-                MarbolesTheme {
-                    val navController = rememberNavController()
-                    WoodImage()
 
-                    CompositionLocalProvider(LocalNavController provides navController) {
-                        NavHost(navController = navController, startDestination = "home") {
-                            composable("home") { HomeScreen() }
-                            composable("score") { ScoreScreen(highscores) }
-                            composable("level") { LevelChoiceScreen(levelViewModel) }
-                            composable("pause") {
-                                PauseScreen(
-                                    remember { mutableStateOf(false) })
-                            }
-                            composable("game") { BallScreen(viewModel) }
-                            composable("gameover") { GameOverScreen() }
+                CompositionLocalProvider(LocalNavController provides navController) {
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") { HomeScreen() }
+                        composable("score") { ScoreScreen(highscores) }
+                        composable("level") { LevelChoiceScreen(levelViewModel) }
+                        composable("pause") {
+                            PauseScreen(
+                                remember { mutableStateOf(false) })
                         }
+                        composable("game") { BallScreen(viewModel) }
+                        composable("gameover") { GameOverScreen() }
                     }
                 }
             }
@@ -358,7 +357,6 @@ fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
     }
 }
 
-
 @Composable
 fun LevelButton(
     levelStatus: LevelStatus,
@@ -378,8 +376,12 @@ fun LevelButton(
     }
 }
 
+fun formatTimer(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "%02d:%02d".format(minutes, remainingSeconds)
+}
 
-@Composable
 fun TopBar() {
 
     val navController = LocalNavController.current
@@ -390,13 +392,11 @@ fun TopBar() {
 
     LaunchedEffect(Unit) { // Coroutine starten
         while (true) {
-
             delay(1000) // Verzögerung von 1 Sekunde
 
             if (!isPaused.value) {
                 time.value++
             }
-
         }
     }
 
@@ -431,21 +431,11 @@ fun TopBar() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(0.dp, 75.dp)
         ) {
             PauseScreen(isPaused = isPaused)
         }
     }
 }
-
-
-@Composable
-fun formatTimer(seconds: Int): String {
-    val minutes = seconds / 60
-    val remainingSeconds = seconds % 60
-    return "%02d:%02d".format(minutes, remainingSeconds)
-}
-
 
 @Composable
 fun PauseScreen(isPaused: MutableState<Boolean>) {
@@ -533,7 +523,6 @@ fun PauseScreen(isPaused: MutableState<Boolean>) {
 
 @Composable
 fun GameOverScreen() {
-
     val navController = LocalNavController.current
     Row (
         modifier = Modifier

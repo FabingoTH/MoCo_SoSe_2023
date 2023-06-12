@@ -5,15 +5,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,18 +19,25 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.example.marboles.LocalNavController
+import com.example.marboles.MenuTitle
 import com.example.marboles.R
 import com.example.marboles.TopBar
+import kotlinx.coroutines.delay
 
 // GAMESCREEN
 @Composable
 fun BallScreen(viewModel : SensorViewModel) {
     val ballCoordinates by viewModel.ballCoordinates.observeAsState(Offset.Zero)
+    val navController = LocalNavController.current
 
     Box(modifier = Modifier.zIndex(100f)) {
         TopBar()
@@ -46,12 +47,12 @@ fun BallScreen(viewModel : SensorViewModel) {
     Box(contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Transparent))
+            .background(Color.Transparent)
+    )
     {
         Goal()
         Ball(Modifier, ballCoordinates)
         WallView()
-
 
     }
 }
@@ -107,7 +108,3 @@ fun WallView() {
         )
     }
 }
-
-
-
-
