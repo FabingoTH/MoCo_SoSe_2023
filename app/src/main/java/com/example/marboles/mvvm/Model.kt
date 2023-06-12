@@ -144,43 +144,6 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
     fun unregisterListener() {
         sensorManager.unregisterListener(this)
     }
-
-    // neue Funktion checkCollisions, nicht fertig
-    // Kommentar hier: Ich denke wenn du die Funktion checkCollision so hast wie oben,
-    // dann brauchst du diese Funktion hier eigentlich nicht mehr. Ich lass sie aber
-    // vorsichtshalber mal drin weil ich nicht 100% weiß was du damit vorhattest
-
-    /*
-    private fun checkCollisions(oldX: Float, oldY: Float, newXPos: Float, newYPos: Float): Pair<Float, Float> {
-        for (wall in walls) {
-            var newX = newXPos
-            var newY = newYPos
-
-            val leftRightX = Range.create(wall.wallLeftX, wall.wallRightX)
-            val topBottomY = Range.create(wall.wallBottomY, wall.wallTopY)
-
-            if (leftRightX.contains(newX) && topBottomY.contains(newY)) {
-                // Links box check für x musste ich auf 15f ändern für meinen screen
-                if (oldX <= wall.wallLeftX && leftRightX.contains(newX)) {
-                    newX = wall.wallLeftX
-                }
-                // Rechts box check für x
-                if (oldX >= wall.wallRightX && leftRightX.contains(newX)) {
-                    newX = wall.wallRightX
-                }
-                // Oben box check für y
-                if (oldY >= wall.wallTopY && topBottomY.contains(newY)) {
-                    newY = wall.wallTopY
-                }
-                // Unten check für y, musste ich auf 150 für meinen screen ändern
-                if (oldY <= wall.wallBottomY && topBottomY.contains(newY)) {
-                    newY = wall.wallBottomY
-                }
-            }
-        }
-        return Pair(newX, newY)
-    }
-    */
 }
 
 
