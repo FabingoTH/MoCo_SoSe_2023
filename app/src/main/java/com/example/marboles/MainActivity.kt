@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
@@ -46,11 +47,10 @@ import com.example.marboles.database.Highscore
 import com.example.marboles.database.HighscoreDao
 import com.example.marboles.database.HighscoreDatabase
 import com.example.marboles.mvvm.BallScreen
+import com.example.marboles.mvvm.LevelStatus
+import com.example.marboles.mvvm.LevelViewModel
 import com.example.marboles.mvvm.SensorViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
 
@@ -87,6 +87,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel = SensorViewModel(this) // Funktioniert das...?
+        val levelViewModel = LevelViewModel(this)
 
         val db = Room.databaseBuilder(
             applicationContext,
@@ -124,31 +125,31 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 WoodImage()
 
-                NavHost(navController = navController, startDestination = "home") {
-                    composable("home") { HomeScreen(navController) }
-                    composable("score") { ScoreScreen(navController, highscores) }
-                    composable("level") { LevelChoiceScreen(navController) }
-                    composable("pause") { PauseScreen(navController) }
-                    composable("game") { BallScreen(navController, viewModel) }
-                    composable("gameover") { GameOverScreen(navController) }
-                }
+                MarbolesTheme {
+                    val navController = rememberNavController()
+                    WoodImage()
 
-                // NAVIGATION FOR DEMONSTRATION
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(0.dp, 30.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Button(onClick = { navController.navigate("home") }) {
-                        Text(text = "Home", fontSize = 20.sp)
-                    }
-                    Button(onClick = { navController.navigate("score") }) {
-                        Text(text = "Score", fontSize = 20.sp)
+                    CompositionLocalProvider(LocalNavController provides navController) {
+                        NavHost(navController = navController, startDestination = "home") {
+                            composable("home") { HomeScreen() }
+                            composable("score") { ScoreScreen(highscores) }
+                            composable("level") { LevelChoiceScreen(levelViewModel) }
+                            composable("pause") {
+                                PauseScreen(
+                                    remember { mutableStateOf(false) })
+                            }
+                            composable("game") { BallScreen(viewModel) }
+                            composable("gameover") { GameOverScreen() }
+                        }
                     }
                 }
             }
         }
     }
 }
+
+// Init Local NavController
+val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 
 @Composable
 fun WoodImage() {
@@ -162,7 +163,10 @@ fun WoodImage() {
 
 // HOME
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen() {
+
+    val navController = LocalNavController.current
+
     Row(
         modifier = Modifier
             .fillMaxSize(),
@@ -183,8 +187,8 @@ fun HomeScreen(navController: NavController) {
                     .padding(60.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-               NavigationButton(label = "Play", navController,"game")
-               NavigationButton(label = "Level", navController,"level")
+               NavigationButton(label = "Play","game")
+               NavigationButton(label = "Level","level")
             }
         }
     }
@@ -210,9 +214,12 @@ fun TitleText(title : String) {
 }
 
 @Composable
-fun NavigationButton(label : String, navController: NavController, screenName: String){
+fun NavigationButton(label : String, screenName: String){
+
+    val navController = LocalNavController.current
+
     Button(
-        onClick = {navController.navigate(screenName)},
+        onClick = {navController?.navigate(screenName)},
         elevation = ButtonDefaults.elevation(0.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
 
@@ -223,7 +230,9 @@ fun NavigationButton(label : String, navController: NavController, screenName: S
 
 // SCORE
 @Composable
-fun ScoreScreen (navController: NavController, highscoreList : List<Highscore>) {
+fun ScoreScreen (highscoreList : List<Highscore>) {
+
+    val navController = LocalNavController.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,10 +294,19 @@ fun ScoreEntry(datum: String, score: String) {
         Text(text = score.toString(), color = Color.Black, fontSize = 30.sp)
     }
 }
+@Composable
+fun MenuTitle(label : String) {
+    Text(text = label.uppercase(), color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
+}
 
 // Levelauswahl
 @Composable
-fun LevelChoiceScreen (navController: NavController) {
+fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
+    val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
+
+    val navController = LocalNavController.current
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -325,23 +343,12 @@ fun LevelChoiceScreen (navController: NavController) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(
-
-                            buildAnnotatedString {
-                            withStyle(
-                                style = SpanStyle(
-                                    color = Color.Black,
-                                )
-                            ) {
-                                append("1 ")
-                            }
-                            append("2 3 4 5 6")
-
-                        },
-                            fontSize = 30.sp,
-                            color = Color.Gray,
-                            letterSpacing = 15.sp,
-                        )
+                        levelStatusList.forEach { levelStatus ->
+                            LevelButton(
+                                levelStatus = levelStatus,
+                                onLevelClicked = { /* Implementieren Sie die Logik für den Klick auf einen Level-Button */ }
+                            )
+                        }
                     }
                 }
             }
@@ -349,13 +356,100 @@ fun LevelChoiceScreen (navController: NavController) {
     }
 }
 
-@Composable
-fun MenuTitle(label : String) {
-    Text(text = label.uppercase(), color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
-}
 
 @Composable
-fun PauseScreen(navController: NavController) {
+fun LevelButton(
+    levelStatus: LevelStatus,
+    onLevelClicked: () -> Unit
+) {
+    val textColor = if (levelStatus.isUnlocked) Color.Black else Color.LightGray
+    TextButton(
+        onClick = onLevelClicked,
+        modifier = Modifier,
+        enabled = levelStatus.isUnlocked
+    ) {
+        Text(
+            text = "${levelStatus.levelNumber}",
+            fontSize = 20.sp,
+            color = textColor
+        )
+    }
+}
+
+
+@Composable
+fun TopBar() {
+
+    val navController = LocalNavController.current
+
+    // Timer-logic
+    val isPaused = remember { mutableStateOf(false) }
+    val time = remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) { // Coroutine starten
+        while (true) {
+
+            delay(1000) // Verzögerung von 1 Sekunde
+
+            if (!isPaused.value) {
+                time.value++
+            }
+
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Transparent)
+            .padding(50.dp, 15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row() {
+            TextButton(onClick = { isPaused.value = !isPaused.value }) {
+                Text(text = "ll", fontSize = 20.sp,)
+            }
+            TextButton(onClick = {navController?.navigate("home") }) {
+                Text(text = "Home", fontSize = 20.sp)
+            }
+            TextButton(onClick = { navController?.navigate("score") }
+            ) {
+                Text(text = "Highscore", fontSize = 20.sp)
+            }
+            TextButton(onClick = { navController?.navigate("gameover") }
+            ) {
+                Text(text = "Kill", fontSize = 20.sp)
+            }
+        }
+        Text(text = "Timer: ${formatTimer(time.value)}", fontSize = 20.sp)
+    }
+
+    if (isPaused.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(0.dp, 75.dp)
+        ) {
+            PauseScreen(isPaused = isPaused)
+        }
+    }
+}
+
+
+@Composable
+fun formatTimer(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "%02d:%02d".format(minutes, remainingSeconds)
+}
+
+
+@Composable
+fun PauseScreen(isPaused: MutableState<Boolean>) {
+
+    val navController = LocalNavController.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -367,19 +461,7 @@ fun PauseScreen(navController: NavController) {
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(50.dp, 15.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row() {
-                    Text(text = "ll", fontSize = 20.sp)
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Text(text = "Level", fontSize = 20.sp)
-                }
-                Text(text = "Time: 00:49", fontSize = 20.sp)
-            }
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -389,6 +471,7 @@ fun PauseScreen(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(100.dp, 30.dp),
                 ) {
                     Row(
                         modifier = Modifier
@@ -404,50 +487,40 @@ fun PauseScreen(navController: NavController) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                       Column() {
-                          Row(
-                              Modifier.fillMaxWidth(0.4f),
-                              horizontalArrangement = Arrangement.SpaceBetween,
-                              verticalAlignment =  Alignment.CenterVertically
+                        Column() {
+                            Row(
+                                Modifier.fillMaxWidth(0.4f),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment =  Alignment.CenterVertically
 
-                          ) {
-                              Text(
-                                  modifier = Modifier
-                                      .padding(0.dp, 0.dp, 30.dp,0.dp),
-                                  text = "SFX", fontSize = 30.sp)
-                              val checkedState = remember { mutableStateOf(true) }
-                              Switch(
-                                  checked = checkedState.value,
-                                  onCheckedChange = { checkedState.value = it }
-                              )
-                          }
-                          Row(
-                              Modifier.fillMaxWidth(0.4f),
-                              horizontalArrangement = Arrangement.SpaceBetween,
-                              verticalAlignment =  Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(0.dp, 0.dp, 30.dp,0.dp),
+                                    text = "SFX", fontSize = 30.sp)
+                                val checkedState = remember { mutableStateOf(true) }
+                                Switch(
+                                    checked = checkedState.value,
+                                    onCheckedChange = { checkedState.value = it }
+                                )
+                            }
+                            Row(
+                                Modifier.fillMaxWidth(0.4f),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment =  Alignment.CenterVertically
 
-                          ) {
-                              Text(
-                                  modifier = Modifier
-                                      .padding(0.dp, 0.dp, 30.dp,0.dp),
-                                  text = "Music", fontSize = 30.sp)
-                              val checkedState = remember { mutableStateOf(true) }
-                              Switch(
-                                  checked = checkedState.value,
-                                  onCheckedChange = { checkedState.value = it }
-                              )
-                          }
-                           Row {
-                               Button(modifier = Modifier.width(150.dp).height(70.dp).padding(10.dp),
-                                   onClick = {navController.navigate("game")}){
-                                   Text(text = "Continue", fontSize = 20.sp)
-                               }
-                               Button(modifier = Modifier.width(150.dp).height(70.dp).padding(10.dp),
-                                   onClick = {navController.navigate("home")}){
-                                   Text(text = "Home", fontSize = 20.sp)
-                               }
-                           }
-                       }
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(0.dp, 0.dp, 30.dp,0.dp),
+                                    text = "Music", fontSize = 30.sp)
+                                val checkedState = remember { mutableStateOf(true) }
+                                Switch(
+                                    checked = checkedState.value,
+                                    onCheckedChange = { checkedState.value = it }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -455,8 +528,11 @@ fun PauseScreen(navController: NavController) {
     }
 }
 
+
 @Composable
-fun GameOverScreen(navController : NavController) {
+fun GameOverScreen() {
+
+    val navController = LocalNavController.current
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -493,11 +569,11 @@ fun GameOverScreen(navController : NavController) {
                         Text("")
                         Row {
                             Button(modifier = Modifier.width(150.dp).height(80.dp).padding(10.dp),
-                                onClick = {navController.navigate("home")}){
+                                onClick = {navController?.navigate("home")}){
                                 Text(text = "Home", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                             }
                             Button(modifier = Modifier.width(150.dp).height(80.dp).padding(10.dp),
-                            onClick = {navController.navigate("game")}){
+                            onClick = {navController?.navigate("game")}){
                                 Text(text = "Retry", fontSize = 22.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
                             }
                         }

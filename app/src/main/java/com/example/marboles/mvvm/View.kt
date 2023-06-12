@@ -26,13 +26,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.marboles.R
+import com.example.marboles.TopBar
 
 // GAMESCREEN
 @Composable
-fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
+fun BallScreen(viewModel : SensorViewModel) {
     val ballCoordinates by viewModel.ballCoordinates.observeAsState(Offset.Zero)
+
+    Box(modifier = Modifier.zIndex(100f)) {
+        TopBar()
+    }
 
     // Playing Field = Screen Size
     Box(contentAlignment = Alignment.Center,
@@ -40,19 +46,7 @@ fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
             .fillMaxSize()
             .background(Color.Transparent))
     {
-        TextButton(
-            modifier = Modifier.align(Alignment.TopStart).size(70.dp),
-            onClick = { navController.navigate("pause") }
-        ) {
-             Text(text = "ll", fontSize = 30.sp, color = Color.Black, fontWeight = FontWeight.Bold)
-        }
 
-        TextButton(
-            modifier = Modifier.align(Alignment.TopEnd).size(70.dp),
-            onClick = { navController.navigate("gameover") }
-        ) {
-            Text(text = "Kill", fontSize = 30.sp, color = Color.Black, fontWeight = FontWeight.Bold)
-        }
 
         Ball(Modifier, ballCoordinates)
         Wall(40f, 90f, 160f, 60f)
