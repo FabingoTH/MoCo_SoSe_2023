@@ -39,15 +39,25 @@ import com.example.marboles.R
 fun BallScreen(navController: NavController, viewModel : SensorViewModel) {
     val ballCoordinates by viewModel.ballCoordinates.observeAsState(Offset.Zero)
 
+    // Playing Field = Screen Size
     Box(contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent))
     {
+        Goal()
         Ball(Modifier, ballCoordinates)
-        // Hier zeichne ich alle Wände die in der Wall Liste sind
-        for(wall in walls){
-            WallView(wall.wallRightX, wall.wallLeftX, wall.wallTopY, wall.wallBottomY)
+        WallView()
+
+
+    }
+}
+
+@Composable
+fun Goal(){
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        translate(left = 250f, top = 200f) {
+            drawCircle(Color.DarkGray, radius = 30.dp.toPx())
         }
     }
 }
@@ -67,24 +77,34 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
 }
 
 // WAND
-// (Zu WallView umbenannt weil es sonst mit der Wall Klasse im Konflikt steht)
 @Composable
-fun WallView(rightX : Float, leftX : Float, topY : Float, bottomY : Float) {
+fun WallView() {
     Canvas( modifier = Modifier ) {
+
+        // OG Wand
         drawRect(
             color = Color.Black,
-            size = Size(width = (leftX - rightX).dp.toPx(), height = (topY - bottomY).dp.toPx()),
-            topLeft = Offset(x = leftX, y = topY)
+            size = Size(width = 50.dp.toPx(), height = 100.dp.toPx()),
+            topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
+        )
+        drawRect(
+            color = Color.Red,
+            size = Size(width = 250.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = 40.dp.toPx(), y = 10.dp.toPx())
+        )
+        drawRect(
+            color = Color.Blue,
+            size = Size(width = 190.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = -100.dp.toPx(), y = -40.dp.toPx())
+        )
+        drawRect(
+            color = Color.Green,
+            size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = 40.dp.toPx(), y = -90.dp.toPx())
         )
     }
 }
 
-@Composable
-fun Goal(){
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        translate(left = 110f, top = 50f) {
-            drawCircle(Color.Red, radius = 25.dp.toPx())
-        }
-    }
-}
+
+
 
