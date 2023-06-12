@@ -304,6 +304,8 @@ fun MenuTitle(label : String) {
 fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
     val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
 
+    levelViewModel.unlockLevel(1)
+
     val navController = LocalNavController.current
 
 
@@ -346,7 +348,7 @@ fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
                         levelStatusList.forEach { levelStatus ->
                             LevelButton(
                                 levelStatus = levelStatus,
-                                onLevelClicked = { /* Implementieren Sie die Logik für den Klick auf einen Level-Button */ }
+                                onLevelClicked = { navController?.navigate("game") }
                             )
                         }
                     }
