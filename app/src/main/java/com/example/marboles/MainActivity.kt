@@ -79,14 +79,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /*
+
     suspend fun addSampleHighscore(dao : HighscoreDao) {
         val highscore = Highscore(date = "10.06.2023", score = 30)
         withContext(Dispatchers.IO) {
             dao.insertHighscore(highscore)
         }
     }
-    */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val viewModel = SensorViewModel(this) // Funktioniert das...?
@@ -140,6 +140,30 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("game") { BallScreen(viewModel) }
                         composable("gameover") { GameOverScreen() }
+                    }
+                }
+
+
+                // NAVIGATION FOR DEMONSTRATION
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(0.dp, 30.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
+                    Button(onClick = { navController.navigate("home") }) {
+                        Text(text = "Home", fontSize = 20.sp)
+                    }
+                    Button(onClick = { navController.navigate("score") }) {
+                        Text(text = "Score", fontSize = 20.sp)
+                    }
+                    Button(onClick =  {
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                addSampleHighscore(highscoreDao)
+                                highscores = highscoreDao.getHighscoresByHighest()
+                            }
+                        }
+                    }) {
+                        Text(text = "Add Highscore", fontSize = 20.sp)
                     }
                 }
             }
