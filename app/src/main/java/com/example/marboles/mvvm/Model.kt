@@ -46,12 +46,12 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
             // Werte aus dem Sensor
-             xTilt = event.values[0]
-             yTilt = -event.values[1]
+             // xTilt = event.values[0]
+             // yTilt = -event.values[1]
 
             // Werte aus dem Sensor
-            // xTilt = mRotationMatrix[1]
-            // yTilt = mRotationMatrix[0]
+              xTilt = mRotationMatrix[1]
+              yTilt = mRotationMatrix[0]
 
             updateCoordinates()
         }

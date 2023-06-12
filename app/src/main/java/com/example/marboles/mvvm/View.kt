@@ -84,7 +84,7 @@ fun WallView() {
         // OG Wand
         drawRect(
             color = Color.Black,
-            size = Size(width = 50.dp.toPx(), height = 100.dp.toPx()),
+            size = Size(width = 50.dp.toPx(), height = 150.dp.toPx()),
             topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
         )
         drawRect(
@@ -94,13 +94,13 @@ fun WallView() {
         )
         drawRect(
             color = Color.Blue,
-            size = Size(width = 190.dp.toPx(), height = 50.dp.toPx()),
-            topLeft = Offset(x = -100.dp.toPx(), y = -40.dp.toPx())
+            size = Size(width = 290.dp.toPx(), height = 50.dp.toPx()),
+            topLeft = Offset(x = -200.dp.toPx(), y = -40.dp.toPx())
         )
         drawRect(
             color = Color.Green,
             size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
-            topLeft = Offset(x = 40.dp.toPx(), y = -90.dp.toPx())
+            topLeft = Offset(x = -160.dp.toPx(), y = 70.dp.toPx())
         )
     }
 }
