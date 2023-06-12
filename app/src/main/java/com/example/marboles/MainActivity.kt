@@ -36,10 +36,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.example.marboles.ui.theme.MarbolesTheme
@@ -49,6 +49,10 @@ import androidx.room.Room
 import com.example.marboles.database.Highscore
 import com.example.marboles.database.HighscoreDao
 import com.example.marboles.database.HighscoreDatabase
+import com.example.marboles.mvvm.BallScreen
+import com.example.marboles.mvvm.LevelStatus
+import com.example.marboles.mvvm.LevelViewModel
+import com.example.marboles.mvvm.SensorViewModel
 import com.example.marboles.mvvm.*
 import kotlinx.coroutines.*
 
@@ -124,6 +128,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 WoodImage()
 
+
                 CompositionLocalProvider(LocalNavController provides navController) {
                     NavHost(navController = navController, startDestination = "home") {
                         composable("home") { HomeScreen() }
@@ -181,8 +186,8 @@ fun HomeScreen() {
                     .padding(60.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-               NavigationButton(label = "Play", navController,"game")
-               NavigationButton(label = "Level", navController, "level")
+               NavigationButton(label = "Play","game")
+               NavigationButton(label = "Level","level")
             }
         }
     }
@@ -208,7 +213,9 @@ fun TitleText(title : String) {
 }
 
 @Composable
-fun NavigationButton(label : String,navController: NavController?, screenName: String){
+fun NavigationButton(label : String, screenName: String){
+
+    val navController = LocalNavController.current
 
     Button(
         onClick = {navController?.navigate(screenName)},
@@ -222,8 +229,9 @@ fun NavigationButton(label : String,navController: NavController?, screenName: S
 
 // SCORE
 @Composable
-fun ScoreScreen ( highscoreList : List<Highscore>) {
+fun ScoreScreen (highscoreList : List<Highscore>) {
 
+    val navController = LocalNavController.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,11 +293,17 @@ fun ScoreEntry(datum: String, score: String) {
         Text(text = score.toString(), color = Color.Black, fontSize = 30.sp)
     }
 }
+@Composable
+fun MenuTitle(label : String) {
+    Text(text = label.uppercase(), color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
+}
 
 // Levelauswahl
 @Composable
 fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
     val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
+
+    levelViewModel.unlockLevel(1)
 
     val navController = LocalNavController.current
 
@@ -333,7 +347,7 @@ fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
                         levelStatusList.forEach { levelStatus ->
                             LevelButton(
                                 levelStatus = levelStatus,
-                                onLevelClicked = { /* Implementieren Sie die Logik für den Klick auf einen Level-Button */ }
+                                onLevelClicked = { navController?.navigate("game") }
                             )
                         }
                     }
@@ -342,7 +356,6 @@ fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
         }
     }
 }
-
 
 @Composable
 fun LevelButton(
@@ -363,13 +376,12 @@ fun LevelButton(
     }
 }
 
-@Composable
-fun MenuTitle(label : String) {
-    Text(text = label.uppercase(), color = Color.Black, fontSize = 40.sp, letterSpacing = 10.sp)
+fun formatTimer(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "%02d:%02d".format(minutes, remainingSeconds)
 }
 
-
-@Composable
 fun TopBar() {
 
     val navController = LocalNavController.current
@@ -467,40 +479,40 @@ fun PauseScreen(isPaused: MutableState<Boolean>) {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                       Column() {
-                          Row(
-                              Modifier.fillMaxWidth(0.4f),
-                              horizontalArrangement = Arrangement.SpaceBetween,
-                              verticalAlignment =  Alignment.CenterVertically
+                        Column() {
+                            Row(
+                                Modifier.fillMaxWidth(0.4f),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment =  Alignment.CenterVertically
 
-                          ) {
-                              Text(
-                                  modifier = Modifier
-                                      .padding(0.dp, 0.dp, 30.dp,0.dp),
-                                  text = "SFX", fontSize = 30.sp)
-                              val checkedState = remember { mutableStateOf(true) }
-                              Switch(
-                                  checked = checkedState.value,
-                                  onCheckedChange = { checkedState.value = it }
-                              )
-                          }
-                          Row(
-                              Modifier.fillMaxWidth(0.4f),
-                              horizontalArrangement = Arrangement.SpaceBetween,
-                              verticalAlignment =  Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(0.dp, 0.dp, 30.dp,0.dp),
+                                    text = "SFX", fontSize = 30.sp)
+                                val checkedState = remember { mutableStateOf(true) }
+                                Switch(
+                                    checked = checkedState.value,
+                                    onCheckedChange = { checkedState.value = it }
+                                )
+                            }
+                            Row(
+                                Modifier.fillMaxWidth(0.4f),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment =  Alignment.CenterVertically
 
-                          ) {
-                              Text(
-                                  modifier = Modifier
-                                      .padding(0.dp, 0.dp, 30.dp,0.dp),
-                                  text = "Music", fontSize = 30.sp)
-                              val checkedState = remember { mutableStateOf(true) }
-                              Switch(
-                                  checked = checkedState.value,
-                                  onCheckedChange = { checkedState.value = it }
-                              )
-                          }
-                       }
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(0.dp, 0.dp, 30.dp,0.dp),
+                                    text = "Music", fontSize = 30.sp)
+                                val checkedState = remember { mutableStateOf(true) }
+                                Switch(
+                                    checked = checkedState.value,
+                                    onCheckedChange = { checkedState.value = it }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -508,10 +520,10 @@ fun PauseScreen(isPaused: MutableState<Boolean>) {
     }
 }
 
+
 @Composable
 fun GameOverScreen() {
     val navController = LocalNavController.current
-
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -541,10 +553,21 @@ fun GameOverScreen() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         MenuTitle(label = "Game Over!")
-                        Text("Your score", fontSize = 30.sp)
+                        Text("Your score", fontSize = 20.sp)
                         // TODO: Hier kommt der Timer rein
                         Text("")
-                        Text("Sample Time", fontSize = 20.sp, color = Color(98,0,237,255))
+                        Text("Sample Time", fontSize = 30.sp, color = Color(98,0,237,255))
+                        Text("")
+                        Row {
+                            Button(modifier = Modifier.width(150.dp).height(80.dp).padding(10.dp),
+                                onClick = {navController?.navigate("home")}){
+                                Text(text = "Home", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                            }
+                            Button(modifier = Modifier.width(150.dp).height(80.dp).padding(10.dp),
+                            onClick = {navController?.navigate("game")}){
+                                Text(text = "Retry", fontSize = 22.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+                            }
+                        }
                     }
                 }
             }
