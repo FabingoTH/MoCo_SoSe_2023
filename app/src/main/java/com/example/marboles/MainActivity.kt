@@ -382,6 +382,7 @@ fun formatTimer(seconds: Int): String {
     return "%02d:%02d".format(minutes, remainingSeconds)
 }
 
+@Composable
 fun TopBar() {
 
     val navController = LocalNavController.current
@@ -431,6 +432,7 @@ fun TopBar() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .offset(0.dp, 75.dp)
         ) {
             PauseScreen(isPaused = isPaused)
         }
