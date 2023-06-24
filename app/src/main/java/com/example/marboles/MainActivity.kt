@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -21,11 +20,8 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
@@ -36,12 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.zIndex
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -49,11 +40,10 @@ import androidx.room.Room
 import com.example.marboles.database.Highscore
 import com.example.marboles.database.HighscoreDao
 import com.example.marboles.database.HighscoreDatabase
-import com.example.marboles.mvvm.BallScreen
-import com.example.marboles.mvvm.LevelStatus
-import com.example.marboles.mvvm.LevelViewModel
-import com.example.marboles.mvvm.SensorViewModel
-import com.example.marboles.mvvm.*
+import com.example.marboles.gamemanager.BallScreen
+import com.example.marboles.gamemanager.LevelStatus
+import com.example.marboles.gamemanager.LevelViewModel
+import com.example.marboles.gamemanager.SensorViewModel
 import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {

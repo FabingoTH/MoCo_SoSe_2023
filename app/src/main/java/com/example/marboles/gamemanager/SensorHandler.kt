@@ -1,4 +1,4 @@
-package com.example.marboles.mvvm
+package com.example.marboles.gamemanager
 
 import android.content.res.Resources
 import android.hardware.Sensor
@@ -10,7 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-// GAME VIEW
+// MODEL
 class SensorHandler (private val sensorManager : SensorManager) : SensorEventListener {
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
@@ -26,7 +26,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
     var newX = 10f
     var newY = 150f
 
-    // Defaultposition, kann auch noch geändert werden
+    // Startposition
     var coordinates = Offset(10f, 150f)
 
     private var mRotationMatrix = FloatArray(16)
@@ -45,13 +45,9 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         if (event != null) {
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
-            // Werte aus dem Sensor
-             // xTilt = event.values[0]
-             // yTilt = -event.values[1]
-
-            // Werte aus dem Sensor
-              xTilt = mRotationMatrix[1]
-              yTilt = mRotationMatrix[0]
+            // Rotationsmatrix, funktioniert immer aber bisher nur nach Osten
+            xTilt = mRotationMatrix[1]
+            yTilt = mRotationMatrix[0]
 
             updateCoordinates()
         }
@@ -67,20 +63,13 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         newY = oldY + yTilt * ballSpeed
 
         // Checks, ob der Ball noch im Feld ist
-        // Magische Nummern, Bound Check funktioniert aus irgendeinem Grund nur mit diesen Werten
-        if (newX < -345f) {
-            newX = -345f
-        }
-        if (newX > 345f) {
-            newX = 345f
-        }
+        // Magische Nummern, Bound Check funktioniert bei mir nur mit diesen Werten
+        // TODO: Statt Magic Numbers Screen Size berechnen
+        if (newX < -345f) { newX = -345f }
+        if (newX > 345f) { newX = 345f }
 
-        if (newY < -155f) {
-            newY = -155f
-        }
-        if (newY > 155f) {
-            newY = 155f
-        }
+        if (newY < -155f) { newY = -155f }
+        if (newY > 155f) { newY = 155f }
 
         // Loopen durch alle Wände
         var collision : Pair<Float, Float>
@@ -117,19 +106,19 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         val topBottomY = Range.create(wallBottomY, wallTopY)
 
         if (leftRightX.contains(newX) && topBottomY.contains(newY)) {
-            // Links box check für x musste ich auf 15f ändern für meinen screen
+            // LINKS
             if (oldX <= wallLeftX && leftRightX.contains(newX)) {
                 newX = wallLeftX
             }
-            // Rechts box check für x
+            // RECHTS
             if (oldX >= wallRightX && leftRightX.contains(newX)) {
                 newX = wallRightX
             }
-            // Oben box check für y
+            // OBEN
             if (oldY >= wallTopY && topBottomY.contains(newY)) {
                 newY = wallTopY
             }
-            // Unten check für y, musste ich auf 150 für meinen screen ändern
+            // UNTEN
             if (oldY <= wallBottomY && topBottomY.contains(newY)) {
                 newY = wallBottomY
             }

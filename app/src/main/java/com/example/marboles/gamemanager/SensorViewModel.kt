@@ -1,4 +1,4 @@
-package com.example.marboles.mvvm
+package com.example.marboles.gamemanager
 
 import android.content.Context
 import android.hardware.SensorManager
@@ -6,10 +6,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 // VIEWMODEL
 
