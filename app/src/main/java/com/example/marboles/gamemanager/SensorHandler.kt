@@ -58,7 +58,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         val oldX = coordinates.x
         val oldY = coordinates.y
 
-        val ballSpeed = 15
+        val ballSpeed = 12
         newX = oldX + xTilt * ballSpeed
         newY = oldY + yTilt * ballSpeed
 
@@ -137,11 +137,13 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         val goalRightX = centerX + 10f
         val goalTopY = centerY - 10f
         val goalBottomY = centerY + 10f
+
         val horizontalX = Range.create(goalLeftX, goalRightX)
         val verticalY = Range.create(goalTopY, goalBottomY)
         var collisionDetected = false
 
         if (horizontalX.contains(newX) && verticalY.contains(newY)) {
+
             // LINKS
             if (oldX <= goalLeftX && horizontalX.contains(newX)) {
 
