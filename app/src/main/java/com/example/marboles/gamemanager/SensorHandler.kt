@@ -126,10 +126,11 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         return Pair(newX, newY)
     }
 
-    private fun checkGoalCollision(oldX: Float,
-                                   oldY: Float,
-                                   centerX : Float,
-                                   centerY : Float
+    private fun checkGoalCollision(
+        oldX: Float,
+        oldY: Float,
+        centerX : Float,
+        centerY : Float
     ): Boolean {
 
         val goalLeftX = centerX - 10f
