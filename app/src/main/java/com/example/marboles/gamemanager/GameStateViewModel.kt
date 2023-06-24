@@ -8,6 +8,6 @@ import androidx.lifecycle.ViewModel
 
 class GameStateViewModel(context : Context) : ViewModel() {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensorModel = SensorHandler(sensorManager)
-    val gameState : LiveData<GameState> = sensorModel.gameState
+    // private val sensorModel = SensorHandler(sensorManager)
+    // val gameState : LiveData<GameState> = sensorModel.gameState
 }

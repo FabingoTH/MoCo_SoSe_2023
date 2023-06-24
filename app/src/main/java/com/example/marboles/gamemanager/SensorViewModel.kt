@@ -11,9 +11,14 @@ import androidx.lifecycle.ViewModel
 
 class SensorViewModel(context : Context) : ViewModel() {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensorModel = SensorHandler(sensorManager)
+    private val sensorModel = SensorHandler(sensorManager, this)
+    val gameState: MutableLiveData<GameState> = MutableLiveData(GameState.INGAME)
 
     val ballCoordinates : LiveData<Offset> = sensorModel.accelerometerData
+
+    fun resetGameState() {
+        gameState.value = GameState.INGAME
+    }
 }
 
 // Level View

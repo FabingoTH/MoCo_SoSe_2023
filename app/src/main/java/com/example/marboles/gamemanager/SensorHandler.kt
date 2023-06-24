@@ -11,7 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 // MODEL
-class SensorHandler (private val sensorManager : SensorManager) : SensorEventListener {
+class SensorHandler (private val sensorManager : SensorManager, private val sensorViewModel : SensorViewModel) : SensorEventListener {
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
@@ -41,8 +41,8 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
     private val _accelerometerData = MutableLiveData<Offset>()
     val accelerometerData : LiveData<Offset> = _accelerometerData // Read-only
 
-    private val _gameState = MutableLiveData<GameState>()
-    val gameState : LiveData<GameState> = _gameState
+    // private val _gameState = MutableLiveData<GameState>()
+    // val gameState : LiveData<GameState> = _gameState
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
@@ -82,7 +82,8 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             newY = collision.second
         }
         if(checkGoalCollision(newX, newY, 160f, 135f)){
-            _gameState.value = GameState.WON
+            // _gameState.value = GameState.WON
+            sensorViewModel.gameState.value = GameState.GAMEOVER
 
             println("Hole Collision!")
         }
@@ -170,10 +171,6 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             }
         }
         return collisionDetected
-    }
-
-    fun resetGameState(){
-        _gameState.value = GameState.INGAME
     }
 
     // Brauchen wir in diesem Fall nicht
