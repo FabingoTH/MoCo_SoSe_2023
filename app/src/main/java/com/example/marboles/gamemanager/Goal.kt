@@ -1,5 +1,6 @@
 package com.example.marboles.gamemanager
 
+import android.util.Range
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -20,3 +21,6 @@ fun Goal(centerX : Float, centerY : Float){
             Offset(x = centerX.dp.toPx(), y = centerY.dp.toPx()))
     }
 }
+
+
+

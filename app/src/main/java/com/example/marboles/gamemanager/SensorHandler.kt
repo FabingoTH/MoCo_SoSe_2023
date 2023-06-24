@@ -126,6 +126,42 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         return Pair(newX, newY)
     }
 
+    private fun checkGoalCollision(oldX: Float,
+                                   oldY: Float,
+                                   centerX : Float,
+                                   centerY : Float
+    ): Boolean {
+
+        val goalLeftX = centerX - 10f
+        val goalRightX = centerX + 10f
+        val goalTopY = centerY - 10f
+        val goalBottomY = centerY + 10f
+        val horizontalX = Range.create(goalLeftX, goalRightX)
+        val verticalY = Range.create(goalTopY, goalBottomY)
+        var collisionDetected = false
+
+        if (horizontalX.contains(newX) && verticalY.contains(newY)) {
+            // LINKS
+            if (oldX <= goalLeftX && horizontalX.contains(newX)) {
+
+            }
+            // RECHTS
+            if (oldX >= goalRightX && horizontalX.contains(newX)) {
+                collisionDetected = true
+            }
+            // OBEN
+            if (oldY >= goalTopY && verticalY.contains(newY)) {
+                collisionDetected = true
+            }
+            // UNTEN
+            if (oldY <= goalBottomY && verticalY.contains(newY)) {
+                collisionDetected = true
+            }
+
+        }
+        return collisionDetected
+    }
+
 
     // Brauchen wir in diesem Fall nicht
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
