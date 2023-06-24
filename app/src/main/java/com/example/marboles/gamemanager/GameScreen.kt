@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
+import androidx.navigation.compose.NavHost
 import com.example.marboles.LocalNavController
 import com.example.marboles.TopBar
 
@@ -32,6 +33,5 @@ fun BallScreen(viewModel : SensorViewModel) {
         Goal(160f, 135f)
         Ball(Modifier, ballCoordinates)
         WallView()
-
     }
 }

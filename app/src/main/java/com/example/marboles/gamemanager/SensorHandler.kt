@@ -39,7 +39,10 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
     }
 
     private val _accelerometerData = MutableLiveData<Offset>()
-    val accelerometerData: LiveData<Offset> = _accelerometerData // Read-only
+    val accelerometerData : LiveData<Offset> = _accelerometerData // Read-only
+
+    private val _gameState = MutableLiveData<GameState>()
+    val gameState : LiveData<GameState> = _gameState
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
@@ -77,6 +80,11 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             collision = checkCollision(oldX, oldY, newX, newY, wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY)
             newX = collision.first
             newY = collision.second
+        }
+        if(checkGoalCollision(newX, newY, 160f, 135f)){
+            _gameState.value = GameState.WON
+
+            println("Hole Collision!")
         }
 
         // Neue Koordinaten festlegen
@@ -146,7 +154,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
 
             // LINKS
             if (oldX <= goalLeftX && horizontalX.contains(newX)) {
-
+                collisionDetected = true
             }
             // RECHTS
             if (oldX >= goalRightX && horizontalX.contains(newX)) {
@@ -160,11 +168,13 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             if (oldY <= goalBottomY && verticalY.contains(newY)) {
                 collisionDetected = true
             }
-
         }
         return collisionDetected
     }
 
+    fun resetGameState(){
+        _gameState.value = GameState.INGAME
+    }
 
     // Brauchen wir in diesem Fall nicht
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
