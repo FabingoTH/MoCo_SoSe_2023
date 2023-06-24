@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun Goal(centerX : Float, centerY : Float){
     Canvas( modifier = Modifier ) {
         drawCircle(
-            color = Color.DarkGray, radius = 55.dp.toPx(), center =
+            color = Color.DarkGray, radius = 28.dp.toPx(), center =
             Offset(x = centerX.dp.toPx(), y = centerY.dp.toPx()))
     }
 }
