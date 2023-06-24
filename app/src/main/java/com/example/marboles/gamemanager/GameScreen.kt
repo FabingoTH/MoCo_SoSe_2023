@@ -29,7 +29,7 @@ fun BallScreen(viewModel : SensorViewModel) {
             .background(Color.Transparent)
     )
     {
-        Goal()
+        Goal(160f, 135f)
         Ball(Modifier, ballCoordinates)
         WallView()
 
