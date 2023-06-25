@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.marboles.GameState
+import com.example.marboles.mvvm.holes
 import com.example.marboles.mvvm.viewModels.SensorViewModel
 import com.example.marboles.mvvm.walls
 
@@ -81,6 +82,14 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
             newX = collision.first
             newY = collision.second
         }
+
+        for(hole in holes) {
+            if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
+                    sensorViewModel.gameState.value = GameState.GAMEOVER
+                    println("Leider verloren...")
+                }
+        }
+
 
         if(checkGoalCollision(newX, newY, 160f, 135f)){
             // _gameState.value = GameState.WON
