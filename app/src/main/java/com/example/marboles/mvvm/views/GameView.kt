@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.marboles.GameState
 
 import com.example.marboles.R
 import com.example.marboles.mvvm.holes
@@ -47,7 +48,7 @@ fun BallScreen(
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
 
     Box(modifier = Modifier.zIndex(100f)) {
-        TopBar(gameViewModel, onClickHome, onClickScore, onClickGameOver, onClickWin)
+        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore, onClickGameOver, onClickWin)
     }
 
     // Playing Field = Screen Size
@@ -62,10 +63,6 @@ fun BallScreen(
         Goal(160f, 135f)
         Ball(Modifier, ballCoordinates)
         WallsLevelOne()
-
-        /*Goal(160f, 135f)
-        Ball(ballCoordinates)
-        WallsLevelOne() // WallView*/
     }
 }
 
@@ -147,6 +144,7 @@ fun WallsLevelOne() {
 @Composable
 fun TopBar(
     gameViewModel: GameViewModel,
+    sensorViewModel: SensorViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit,
     onClickGameOver: () -> Unit,
@@ -174,22 +172,31 @@ fun TopBar(
                 Text(text = "ll", fontSize = 20.sp)
             }
             TextButton(
-                onClick = onClickHome
+                onClick = {
+                    sensorViewModel.gameState.value = GameState.PAUSED
+                    onClickHome()
+                }
             ) {
                 Text(text = "Home", fontSize = 20.sp)
             }
-            TextButton(
+            TextButton( // Ich denke mal der Button kommt bald wieder weg, deswegen kein State
                 onClick = onClickScore
             ) {
                 Text(text = "Highscore", fontSize = 20.sp)
             }
             TextButton(
-                onClick = onClickGameOver
+                onClick = {
+                    sensorViewModel.gameState.value = GameState.GAMEOVER
+                    onClickGameOver()
+                }
             ) {
                 Text(text = "Defeat", fontSize = 20.sp)
             }
             TextButton(
-                onClick = onClickWin
+                onClick = {
+                    sensorViewModel.gameState.value = GameState.WON
+                    onClickWin()
+                }
             ) {
                 Text(text = "Win", fontSize = 20.sp)
             }
