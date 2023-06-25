@@ -91,6 +91,7 @@ fun NavigationManager(
             composable("level") { LevelChoiceScreen(levelViewModel) }
             composable("game") {
                 val gameState by sensorViewModel.gameState.observeAsState(GameState.INGAME)
+                val playEffectKey = "playingEffect"
                 val winEffectKey = "winEffect"
                 val gameoverEffectKey = "gameoverEffect"
 
@@ -100,8 +101,7 @@ fun NavigationManager(
                             sensorViewModel,
                             gameViewModel,
                             { navController.navigate("home") },
-                            { navController.navigate("score") },
-                            { navController.navigate("win") }
+                            { navController.navigate("score") }
                         )
                     }
                     GameState.WON -> {

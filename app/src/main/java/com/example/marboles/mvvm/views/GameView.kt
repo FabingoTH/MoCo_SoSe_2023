@@ -40,14 +40,13 @@ fun BallScreen(
     sensorViewModel: SensorViewModel,
     gameViewModel: GameViewModel,
     onClickHome: () -> Unit,
-    onClickScore: () -> Unit,
-    onClickWin: () -> Unit
+    onClickScore: () -> Unit
 ) {
 
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
 
     Box(modifier = Modifier.zIndex(100f)) {
-        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore, onClickWin)
+        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore)
     }
 
     // Playing Field = Screen Size
@@ -145,8 +144,7 @@ fun TopBar(
     gameViewModel: GameViewModel,
     sensorViewModel: SensorViewModel,
     onClickHome: () -> Unit,
-    onClickScore: () -> Unit,
-    onClickWin: () -> Unit
+    onClickScore: () -> Unit
 ) {
 
     // Timer-logic ist letzt im game view model
@@ -182,15 +180,6 @@ fun TopBar(
             ) {
                 Text(text = "Highscore", fontSize = 20.sp)
             }
-            TextButton(
-                onClick = {
-                    sensorViewModel.gameState.value = GameState.WON
-                    onClickWin()
-                }
-            ) {
-                Text(text = "Win", fontSize = 20.sp)
-            }
-
         }
         Text(text = "Timer: ${gameViewModel.formatTimer(time)}", fontSize = 20.sp)
     }

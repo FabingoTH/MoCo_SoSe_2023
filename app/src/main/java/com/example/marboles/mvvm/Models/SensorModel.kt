@@ -87,13 +87,11 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         for(hole in holes) {
             if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
                 sensorViewModel.gameState.value = GameState.GAMEOVER
-                println("Leider verloren...")
             }
         }
 
         if(checkGoalCollision(newX, newY, 160f, 135f)){
             sensorViewModel.gameState.value = GameState.WON
-            println("Gewonnen!")
         }
 
         // Neue Koordinaten festlegen
