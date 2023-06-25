@@ -43,4 +43,8 @@ class GameViewModel() {
         _time.value = 0
     }
 
+    fun resetBallPos() {
+
+    }
+
 }

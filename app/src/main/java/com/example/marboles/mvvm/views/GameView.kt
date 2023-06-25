@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 
 import com.example.marboles.R
+import com.example.marboles.mvvm.holes
 
 import com.example.marboles.mvvm.viewModels.GameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
@@ -57,9 +58,14 @@ fun BallScreen(
             .background(Color.Transparent)
     )
     {
+        HoleView()
         Goal(160f, 135f)
+        Ball(Modifier, ballCoordinates)
+        WallsLevelOne()
+
+        /*Goal(160f, 135f)
         Ball(ballCoordinates)
-        WallsLevelOne() // WallView
+        WallsLevelOne() // WallView*/
     }
 }
 
@@ -69,7 +75,7 @@ fun BallScreen(
 
 // BALL
 @Composable
-fun Ball(coordinates: Offset) {
+fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
     Image(
         modifier = Modifier
             .offset(coordinates.x.dp, coordinates.y.dp)
@@ -85,9 +91,24 @@ fun Ball(coordinates: Offset) {
 fun Goal(centerX: Float, centerY: Float) {
     Canvas(modifier = Modifier) {
         drawCircle(
-            color = Color.DarkGray, radius = 55f, center =
+            color = Color.DarkGray, radius = 30.dp.toPx(), center =
             Offset(x = centerX.dp.toPx(), y = centerY.dp.toPx())
         )
+    }
+}
+
+// TODO: Loch Composable für Game Over Condition
+
+@Composable
+fun HoleView() {
+    for (hole in holes) {
+        Canvas(modifier = Modifier) {
+            drawCircle(
+                color = Color.Red,
+                radius = hole.radius.dp.toPx(),
+                center = Offset(x = hole.centerX.dp.toPx(), y = hole.centerY.dp.toPx())
+            )
+        }
     }
 }
 
@@ -321,7 +342,10 @@ fun WinScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame
                                     .width(150.dp)
                                     .height(80.dp)
                                     .padding(10.dp),
-                                onClick = onClickHome
+                                onClick = {
+                                    gameViewModel.resetTimer()
+                                    onClickHome
+                                }
                             ) {
                                 Text(text = "Home", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                             }
