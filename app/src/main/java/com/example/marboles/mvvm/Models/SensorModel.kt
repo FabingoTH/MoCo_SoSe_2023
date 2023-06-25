@@ -34,7 +34,7 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     val startPosition = Offset(10f, 150f)
     var coordinates = startPosition
 
-    private var mRotationMatrix = FloatArray(16)
+    private var mRotationMatrix = FloatArray(9)
 
     init {
         accelerometerSensor?.let {
@@ -50,9 +50,22 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         if (event != null) {
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
-            // Rotationsmatrix, funktioniert immer aber bisher nur nach Osten
-            xTilt = mRotationMatrix[1]
-            yTilt = mRotationMatrix[0]
+            val remappedRotationMatrix = FloatArray(9)
+            SensorManager.remapCoordinateSystem(
+                mRotationMatrix,
+                SensorManager.AXIS_X, SensorManager.AXIS_Y, remappedRotationMatrix
+            )
+
+            val orientationAngles = FloatArray(3)
+            SensorManager.getOrientation(remappedRotationMatrix, orientationAngles)
+
+            // Werte aus dem Sensor
+            // xTilt = event.values[0]
+            // yTilt = -event.values[1]
+
+            // Werte aus dem Sensor
+            xTilt = -orientationAngles[1]
+            yTilt = -orientationAngles[2]
 
             updateCoordinates()
         }
