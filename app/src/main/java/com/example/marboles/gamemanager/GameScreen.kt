@@ -30,6 +30,7 @@ fun BallScreen(viewModel : SensorViewModel) {
     )
     {
         Goal(160f, 135f)
+        Hole(-180f, 180f)
         Ball(Modifier, ballCoordinates)
         WallView()
 

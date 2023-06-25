@@ -62,6 +62,8 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         newX = oldX + xTilt * ballSpeed
         newY = oldY + yTilt * ballSpeed
 
+
+
         // Checks, ob der Ball noch im Feld ist
         // Magische Nummern, Bound Check funktioniert bei mir nur mit diesen Werten
         // TODO: Statt Magic Numbers Screen Size berechnen
@@ -164,6 +166,9 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         }
         return collisionDetected
     }
+
+
+
 
 
     // Brauchen wir in diesem Fall nicht
