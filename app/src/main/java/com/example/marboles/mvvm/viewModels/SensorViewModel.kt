@@ -5,7 +5,7 @@ import android.hardware.SensorManager
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.marboles.mvvm.models.SensorModel
+import com.example.marboles.mvvm.Models.SensorModel
 
 // VIEWMODEL
 
@@ -14,4 +14,6 @@ class SensorViewModel(context : Context) : ViewModel() {
     private val sensorModel = SensorModel(sensorManager)
 
     val ballCoordinates : LiveData<Offset> = sensorModel.accelerometerData
+
+    // TODO Reset Gamestate
 }

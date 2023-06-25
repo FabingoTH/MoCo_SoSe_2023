@@ -1,4 +1,4 @@
-package com.example.marboles.mvvm.models
+package com.example.marboles.mvvm.Models
 
 import android.content.res.Resources
 import android.hardware.Sensor
@@ -84,6 +84,8 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
     }
+
+    // TODO Reset ballcoordinates
 
     private fun checkCollision(
         oldX: Float,

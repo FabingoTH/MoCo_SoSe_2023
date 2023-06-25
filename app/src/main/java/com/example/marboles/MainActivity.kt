@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
+import com.example.marboles.mvvm.Views.ScoreScreen
 import com.example.marboles.mvvm.viewModels.*
 import com.example.marboles.mvvm.views.*
 

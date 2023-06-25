@@ -14,7 +14,6 @@ class HighscoreRepository(context: Context) {
 
     private val highscoreDao = db.highscoreDao()
 
-
     suspend fun getAllHighscores(): List<Highscore>? {
         return withContext(Dispatchers.IO) {
             highscoreDao.getHighscoresByHighest()
@@ -28,13 +27,6 @@ class HighscoreRepository(context: Context) {
     suspend fun deleteAllHighscores(highscores: List<Highscore>) {
         withContext(Dispatchers.IO) {
             highscoreDao.deleteHighscores(highscores)
-        }
-    }
-
-    suspend fun addSampleHighscore() {
-        val highscore = Highscore(date = "10.06.2023", score = 30)
-        withContext(Dispatchers.IO) {
-            highscoreDao.insertHighscore(highscore)
         }
     }
 
