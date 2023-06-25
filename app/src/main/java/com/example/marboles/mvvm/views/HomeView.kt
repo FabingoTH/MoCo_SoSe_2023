@@ -3,6 +3,8 @@ package com.example.marboles.mvvm.views
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,9 +14,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.marboles.GameState
+import com.example.marboles.mvvm.viewModels.SensorViewModel
 
 @Composable
-fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit) {
+fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewModel : SensorViewModel) {
     Row(
         modifier = Modifier
             .fillMaxSize(),
@@ -35,8 +39,29 @@ fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit) {
                     .padding(60.dp, 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NavigationButton(label = "Play", onClickPlay)
-                NavigationButton(label = "Level", onClickLevel)
+                Button(
+                    onClick = {
+                        sensorViewModel.gameState.value = GameState.INGAME
+                        onClickPlay()
+                    },
+                    elevation = ButtonDefaults.elevation(0.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
+
+                {
+                    Text(text = "Play", color = Color.Black, fontSize = 30.sp)
+                }
+
+                Button(
+                    onClick = {
+                        sensorViewModel.gameState.value = GameState.PAUSED
+                        onClickLevel()
+                    },
+                    elevation = ButtonDefaults.elevation(0.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
+
+                {
+                    Text(text = "Level", color = Color.Black, fontSize = 30.sp)
+                }
             }
         }
     }

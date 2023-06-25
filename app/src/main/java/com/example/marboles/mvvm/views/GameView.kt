@@ -41,14 +41,13 @@ fun BallScreen(
     gameViewModel: GameViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit,
-    onClickGameOver: () -> Unit,
     onClickWin: () -> Unit
 ) {
 
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
 
     Box(modifier = Modifier.zIndex(100f)) {
-        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore, onClickGameOver, onClickWin)
+        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore, onClickWin)
     }
 
     // Playing Field = Screen Size
@@ -147,7 +146,6 @@ fun TopBar(
     sensorViewModel: SensorViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit,
-    onClickGameOver: () -> Unit,
     onClickWin: () -> Unit
 ) {
 
@@ -183,14 +181,6 @@ fun TopBar(
                 onClick = onClickScore
             ) {
                 Text(text = "Highscore", fontSize = 20.sp)
-            }
-            TextButton(
-                onClick = {
-                    sensorViewModel.gameState.value = GameState.GAMEOVER
-                    onClickGameOver()
-                }
-            ) {
-                Text(text = "Defeat", fontSize = 20.sp)
             }
             TextButton(
                 onClick = {
@@ -383,7 +373,7 @@ fun WinScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame
 
 // für den game over screen muss die zeit noch pausiert werden im vm (isPaused ändern)
 @Composable
-fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit) {
+fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit, sensorViewModel: SensorViewModel) {
 
     Row(
         modifier = Modifier
@@ -438,6 +428,7 @@ fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClic
                                 .height(80.dp)
                                 .padding(10.dp),
                                 onClick = {
+                                    sensorViewModel.gameState.value = GameState.INGAME
                                     gameViewModel.resetTimer()
                                     onClickGame()
                                 }
