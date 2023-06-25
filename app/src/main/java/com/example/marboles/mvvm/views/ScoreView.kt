@@ -1,8 +1,6 @@
-package com.example.marboles.mvvm.Views
+package com.example.marboles.mvvm.views
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -24,7 +22,7 @@ import com.example.marboles.mvvm.views.MenuTitle
 import kotlinx.coroutines.launch
 
 @Composable
-fun ScoreScreen(scoreViewModel: ScoreViewModel) {
+fun ScoreView(scoreViewModel: ScoreViewModel) {
 
     val coroutineScope = rememberCoroutineScope()
 

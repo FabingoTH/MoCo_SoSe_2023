@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.marboles.GameState
 
 import com.example.marboles.R
 import com.example.marboles.mvvm.holes
@@ -40,14 +41,13 @@ fun BallScreen(
     gameViewModel: GameViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit,
-    onClickGameOver: () -> Unit,
     onClickWin: () -> Unit
 ) {
 
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
 
     Box(modifier = Modifier.zIndex(100f)) {
-        TopBar(gameViewModel, onClickHome, onClickScore, onClickGameOver, onClickWin)
+        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore, onClickWin)
     }
 
     // Playing Field = Screen Size
@@ -62,10 +62,6 @@ fun BallScreen(
         Goal(160f, 135f)
         Ball(Modifier, ballCoordinates)
         WallsLevelOne()
-
-        /*Goal(160f, 135f)
-        Ball(ballCoordinates)
-        WallsLevelOne() // WallView*/
     }
 }
 
@@ -147,9 +143,9 @@ fun WallsLevelOne() {
 @Composable
 fun TopBar(
     gameViewModel: GameViewModel,
+    sensorViewModel: SensorViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit,
-    onClickGameOver: () -> Unit,
     onClickWin: () -> Unit
 ) {
 
@@ -174,22 +170,23 @@ fun TopBar(
                 Text(text = "ll", fontSize = 20.sp)
             }
             TextButton(
-                onClick = onClickHome
+                onClick = {
+                    sensorViewModel.gameState.value = GameState.PAUSED
+                    onClickHome()
+                }
             ) {
                 Text(text = "Home", fontSize = 20.sp)
             }
-            TextButton(
+            TextButton( // Ich denke mal der Button kommt bald wieder weg, deswegen kein State
                 onClick = onClickScore
             ) {
                 Text(text = "Highscore", fontSize = 20.sp)
             }
             TextButton(
-                onClick = onClickGameOver
-            ) {
-                Text(text = "Defeat", fontSize = 20.sp)
-            }
-            TextButton(
-                onClick = onClickWin
+                onClick = {
+                    sensorViewModel.gameState.value = GameState.WON
+                    onClickWin()
+                }
             ) {
                 Text(text = "Win", fontSize = 20.sp)
             }
@@ -376,7 +373,7 @@ fun WinScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame
 
 // für den game over screen muss die zeit noch pausiert werden im vm (isPaused ändern)
 @Composable
-fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit) {
+fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit, sensorViewModel: SensorViewModel) {
 
     Row(
         modifier = Modifier
@@ -431,6 +428,7 @@ fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClic
                                 .height(80.dp)
                                 .padding(10.dp),
                                 onClick = {
+                                    sensorViewModel.gameState.value = GameState.INGAME
                                     gameViewModel.resetTimer()
                                     onClickGame()
                                 }

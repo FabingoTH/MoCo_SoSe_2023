@@ -30,8 +30,9 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     var newX = 10f
     var newY = 150f
 
-    // Startposition
-    var coordinates = Offset(10f, 150f)
+    // Setze Startposition
+    val startPosition = Offset(10f, 150f)
+    var coordinates = startPosition
 
     private var mRotationMatrix = FloatArray(16)
 
@@ -92,9 +93,7 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
 
         if(checkGoalCollision(newX, newY, 160f, 135f)){
-            // _gameState.value = GameState.WON
             sensorViewModel.gameState.value = GameState.GAMEOVER
-
             println("Hole Collision!")
         }
 
@@ -102,8 +101,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
     }
-
-    // TODO Reset ballcoordinates
 
     private fun checkCollision(
         oldX: Float,
@@ -185,6 +182,10 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         return collisionDetected
     }
 
+    fun resetBallCoordinates(){
+        coordinates = startPosition
+        _accelerometerData.value = coordinates
+    }
 
     // Brauchen wir in diesem Fall nicht
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}

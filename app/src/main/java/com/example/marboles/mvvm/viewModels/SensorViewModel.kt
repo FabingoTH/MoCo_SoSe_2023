@@ -19,6 +19,6 @@ class SensorViewModel(context : Context) : ViewModel() {
     val ballCoordinates : LiveData<Offset> = sensorModel.accelerometerData
 
     fun resetGameState() {
-        // TODO
+        sensorModel.resetBallCoordinates()
     }
 }

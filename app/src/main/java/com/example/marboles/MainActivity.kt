@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.marboles.ui.theme.MarbolesTheme
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
-import com.example.marboles.mvvm.Views.ScoreScreen
+import com.example.marboles.mvvm.views.ScoreView
 import com.example.marboles.mvvm.viewModels.*
 import com.example.marboles.mvvm.views.*
 
@@ -31,7 +32,6 @@ class MainActivity : ComponentActivity() {
         val levelViewModel = LevelViewModel(this)
         val scoreViewModel = ScoreViewModel(this)
         val gameViewModel = GameViewModel()
-
 
         // FORCE FULLSCREEN
         window.decorView.systemUiVisibility = (
@@ -52,7 +52,6 @@ class MainActivity : ComponentActivity() {
             LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
             MarbolesTheme {
-
                 WoodImage()
                 val navController: NavHostController = rememberNavController()
 
@@ -64,7 +63,6 @@ class MainActivity : ComponentActivity() {
                     scoreViewModel,
                     gameViewModel
                 )
-
             }
         }
     }
@@ -85,24 +83,45 @@ fun NavigationManager(
             composable("home") {
                 HomeScreen(
                     { navController.navigate("game") },
-                    { navController.navigate("level") })
+                    { navController.navigate("level") },
+                    sensorViewModel
+                )
             }
-            composable("score") { ScoreScreen(scoreViewModel) }
+            composable("score") { ScoreView(scoreViewModel) }
             composable("level") { LevelChoiceScreen(levelViewModel) }
             composable("game") {
-                BallScreen(
-                    sensorViewModel,
-                    gameViewModel,
-                    { navController.navigate("home") },
-                    { navController.navigate("score") },
-                    { navController.navigate("gameover") },
-                    { navController.navigate("win") })
+                val gameState by sensorViewModel.gameState.observeAsState(GameState.INGAME)
+
+                when(gameState) {
+                    GameState.INGAME -> {
+                        BallScreen(
+                            sensorViewModel,
+                            gameViewModel,
+                            { navController.navigate("home") },
+                            { navController.navigate("score") },
+                            { navController.navigate("win") }
+                        )
+                    }
+                    GameState.WON -> {
+                        navController.navigate("win")
+                    }
+                    GameState.GAMEOVER -> {
+                        LaunchedEffect(key1 = gameState) {
+                            navController.navigate("gameover")
+                        }
+                    }
+                    GameState.PAUSED -> {
+
+                    }
+                }
             }
             composable("gameover") {
                 GameOverScreen(
                     gameViewModel,
                     { navController.navigate("home") },
-                    { navController.navigate("game") })
+                    { navController.navigate("game") },
+                    sensorViewModel
+                )
             }
             composable("win") {
                 WinScreen(gameViewModel,
@@ -133,6 +152,7 @@ fun LockScreenOrientation(orientation: Int) {
     }
 }
 
+// Wozu brauchen wir das?
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()
