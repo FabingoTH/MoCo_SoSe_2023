@@ -293,7 +293,7 @@ fun PauseOverlay() {
 
 // Win Screen
 @Composable
-fun WinScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit) {
+fun WinScreen(gameViewModel: GameViewModel, sensorViewModel: SensorViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit) {
 
     Row(
         modifier = Modifier
@@ -340,8 +340,11 @@ fun WinScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame
                                     .height(80.dp)
                                     .padding(10.dp),
                                 onClick = {
+                                    // TODO : sensorViewModel.resetGameState()
+                                    // Dann bräuchte man resetTimer auch nicht mehr
+                                    sensorViewModel.gameState.value = GameState.PAUSED
                                     gameViewModel.resetTimer()
-                                    onClickHome
+                                    onClickHome()
                                 }
                             ) {
                                 Text(text = "Home", fontSize = 22.sp, fontWeight = FontWeight.Bold)
@@ -351,8 +354,11 @@ fun WinScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame
                                 .height(80.dp)
                                 .padding(10.dp),
                                 onClick = {
+                                    // TODO : sensorViewModel.resetGameState()
+                                    // Dann bräuchte man resetTimer auch nicht mehr
+                                    sensorViewModel.gameState.value = GameState.INGAME
                                     gameViewModel.resetTimer()
-                                    onClickGame()
+                                    onClickGame() // TODO : Next Level
                                 }
                             ) {
                                 Text(
@@ -429,6 +435,7 @@ fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClic
                                 .padding(10.dp),
                                 onClick = {
                                     sensorViewModel.gameState.value = GameState.INGAME
+                                    // TODO : resetGameState(), dann kann resetTimer weg
                                     gameViewModel.resetTimer()
                                     onClickGame()
                                 }
