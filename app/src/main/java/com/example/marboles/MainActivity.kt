@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
         // ViewModels initialisieren, um sie in die Views übergeben zu können
         val sensorViewModel = SensorViewModel(this)
         val levelViewModel = LevelViewModel(this)
-        val scoreViewModel = ScoreViewModel(this)
-        val gameViewModel = GameViewModel()
+        val scoreGameViewModel = ScoreGameViewModel(this)
+
 
         // FORCE FULLSCREEN
         window.decorView.systemUiVisibility = (
@@ -60,8 +60,7 @@ class MainActivity : ComponentActivity() {
                     navController,
                     levelViewModel,
                     sensorViewModel,
-                    scoreViewModel,
-                    gameViewModel
+                    scoreGameViewModel
                 )
             }
         }
@@ -74,8 +73,8 @@ fun NavigationManager(
     navController: NavHostController,
     levelViewModel: LevelViewModel,
     sensorViewModel: SensorViewModel,
-    scoreViewModel: ScoreViewModel,
-    gameViewModel: GameViewModel
+    scoreGameViewModel: ScoreGameViewModel,
+
 ) {
 
     CompositionLocalProvider(LocalNavController provides navController) {
@@ -87,7 +86,7 @@ fun NavigationManager(
                     sensorViewModel
                 )
             }
-            composable("score") { ScoreView(scoreViewModel) }
+            composable("score") { ScoreView(scoreGameViewModel) }
             composable("level") { LevelChoiceScreen(levelViewModel) }
             composable("game") {
                 val gameState by sensorViewModel.gameState.observeAsState(GameState.INGAME)
@@ -95,11 +94,13 @@ fun NavigationManager(
                 val winEffectKey = "winEffect"
                 val gameoverEffectKey = "gameoverEffect"
 
-                when(gameState) {
+                if(gameState == GameState.WON) scoreGameViewModel.addHighscore()
+
+                when(gameState!!) {
                     GameState.INGAME -> {
                         BallScreen(
                             sensorViewModel,
-                            gameViewModel,
+                            scoreGameViewModel,
                             { navController.navigate("home") },
                             { navController.navigate("score") }
                         )
@@ -114,21 +115,19 @@ fun NavigationManager(
                             navController.navigate("gameover")
                         }
                     }
-                    GameState.PAUSED -> {
-
-                    }
+                    GameState.PAUSED -> {}
                 }
             }
             composable("gameover") {
                 GameOverScreen(
-                    gameViewModel,
+                    scoreGameViewModel,
                     { navController.navigate("home") },
                     { navController.navigate("game") },
                     sensorViewModel
                 )
             }
             composable("win") {
-                WinScreen(gameViewModel,
+                WinScreen(scoreGameViewModel,
                     sensorViewModel,
                     { navController.navigate("home") },
                     { navController.navigate("game") },

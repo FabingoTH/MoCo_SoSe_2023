@@ -1,9 +1,15 @@
 package com.example.marboles.database
 
 import android.content.Context
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 
 class HighscoreRepository(context: Context) {
 
@@ -16,7 +22,10 @@ class HighscoreRepository(context: Context) {
 
     suspend fun getAllHighscores(): List<Highscore>? {
         return withContext(Dispatchers.IO) {
-            highscoreDao.getHighscoresByHighest()
+            // irgendwie wurden die Highscores immer doppelt angezeigt.
+            // "distinct" löst zwar nicht das eigentliche Problem (welches wir nicht kennen - werden die zweimal abgespeichert?
+            // why tho??) aber wenigstens ist das Problem nicht mehr sichtbar ;)
+            highscoreDao.getHighscoresByHighest()!!.distinct()
         }
     }
 
@@ -24,9 +33,9 @@ class HighscoreRepository(context: Context) {
             highscoreDao.insertHighscore(highscore)
     }
 
-    suspend fun deleteAllHighscores(highscores: List<Highscore>) {
+    suspend fun deleteAllHighscores() {
         withContext(Dispatchers.IO) {
-            highscoreDao.deleteHighscores(highscores)
+            highscoreDao.deleteAllHighscores()
         }
     }
 

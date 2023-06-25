@@ -27,7 +27,7 @@ import com.example.marboles.GameState
 import com.example.marboles.R
 import com.example.marboles.mvvm.holes
 
-import com.example.marboles.mvvm.viewModels.GameViewModel
+import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
 import com.example.marboles.mvvm.walls
 
@@ -39,7 +39,7 @@ import com.example.marboles.mvvm.walls
 @Composable
 fun BallScreen(
     sensorViewModel: SensorViewModel,
-    gameViewModel: GameViewModel,
+    gameViewModel: ScoreGameViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit
 ) {
@@ -128,7 +128,7 @@ fun WallsLevelOne() {
 
 @Composable
 fun TopBar(
-    gameViewModel: GameViewModel,
+    gameViewModel: ScoreGameViewModel,
     sensorViewModel: SensorViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit
@@ -269,7 +269,7 @@ fun PauseOverlay() {
 
 // Win Screen
 @Composable
-fun WinScreen(gameViewModel: GameViewModel, sensorViewModel: SensorViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit) {
+fun WinScreen(gameViewModel: ScoreGameViewModel, sensorViewModel: SensorViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit) {
 
     Row(
         modifier = Modifier
@@ -299,15 +299,17 @@ fun WinScreen(gameViewModel: GameViewModel, sensorViewModel: SensorViewModel, on
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
                         MenuTitle(label = "You Win")
+                        Spacer(modifier = Modifier.size(15.dp))
                         Text("Your Score:", fontSize = 20.sp)
-                        Spacer(modifier = Modifier)
+                        Spacer(modifier = Modifier.size(15.dp))
                         Text(
                             gameViewModel.formatTimer(),
                             fontSize = 30.sp,
                             color = Color(98, 0, 237, 255)
                         )
-                        Spacer(modifier = Modifier)
+                        Spacer(modifier = Modifier.size(15.dp))
 
                         Row {
                             Button(
@@ -355,7 +357,7 @@ fun WinScreen(gameViewModel: GameViewModel, sensorViewModel: SensorViewModel, on
 
 // für den game over screen muss die zeit noch pausiert werden im vm (isPaused ändern)
 @Composable
-fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit, sensorViewModel: SensorViewModel) {
+fun GameOverScreen(gameViewModel: ScoreGameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit, sensorViewModel: SensorViewModel) {
 
     Row(
         modifier = Modifier
@@ -386,14 +388,15 @@ fun GameOverScreen(gameViewModel: GameViewModel, onClickHome: () -> Unit, onClic
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         MenuTitle(label = "Game Over!")
+                        Spacer(modifier = Modifier.size(15.dp))
                         Text("You wasted this much of your time:", fontSize = 20.sp)
-                        Spacer(modifier = Modifier)
+                        Spacer(modifier = Modifier.size(15.dp))
                         Text(
                             gameViewModel.formatTimer(),
                             fontSize = 30.sp,
                             color = Color(98, 0, 237, 255)
                         )
-                        Spacer(modifier = Modifier)
+                        Spacer(modifier = Modifier.size(15.dp))
 
                         Row {
                             Button(

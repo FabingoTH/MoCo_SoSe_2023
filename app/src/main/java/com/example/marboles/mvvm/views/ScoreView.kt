@@ -16,13 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.marboles.database.Highscore
-import com.example.marboles.mvvm.viewModels.ScoreViewModel
-import com.example.marboles.mvvm.views.MenuTitle
+import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 
 import kotlinx.coroutines.launch
 
 @Composable
-fun ScoreView(scoreViewModel: ScoreViewModel) {
+fun ScoreView(scoreViewModel: ScoreGameViewModel) {
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -34,11 +33,11 @@ fun ScoreView(scoreViewModel: ScoreViewModel) {
             .zIndex(1f),
         onClick = {
             coroutineScope.launch {
-                scoreViewModel.addHighscore() // normalerweise übergeben
+                scoreViewModel.deleteAllHighscores() // button nur für testing - oder wollen wir diese funktionalität beibehalten?
             }
         }
     ) {
-        Text(text = "Highscore hinzufügen", fontSize = 20.sp)
+        Text(text = "Alle löschen", fontSize = 20.sp)
     }
 
     Row(
@@ -77,15 +76,11 @@ fun ScoreView(scoreViewModel: ScoreViewModel) {
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        if(highscoreList==null){
+                        if (highscoreList == null) {
                             Text("no highscores yet")
                         } else {
-                            for(element in highscoreList!!){
-                                ScoreEntry(datum = element.date, score = element.score.toString())
-                            }
-
-
-
+                            for (element in highscoreList!!) { // in der Highscoreliste ist jetzt auch die Zeit im Timer-Format
+                                ScoreEntry(datum = element.date, score = scoreViewModel.formatTimer(element.score))
                             }
                         }
                     }
@@ -93,6 +88,7 @@ fun ScoreView(scoreViewModel: ScoreViewModel) {
             }
         }
     }
+}
 
 
 @Composable

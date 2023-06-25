@@ -16,6 +16,11 @@ import com.example.marboles.mvvm.walls
 
 // MODEL
 class SensorModel (private val sensorManager : SensorManager, private val sensorViewModel: SensorViewModel) : SensorEventListener {
+
+    // kleine Notiz: in einer mvvm-Architektur ist im Model eig keine Referenz auf das VM (siehe Argumentliste) - hier ist das ja nur für das enum/die States
+    // da, also nicht so tragisch, aber maybe können wir das nach nem zukünftigen merge einfach auf Model-Ebene packen um dann vom
+    // VM darauf zuzugreifen. Damit wir uns nicht selber ins bein schießen damit, und gesagt wird, wir haben "mvvm nicht richtig implementiert" (:
+
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
