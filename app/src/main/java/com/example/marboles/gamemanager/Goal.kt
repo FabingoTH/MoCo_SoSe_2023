@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun Goal(centerX : Float, centerY : Float){
     Canvas( modifier = Modifier ) {

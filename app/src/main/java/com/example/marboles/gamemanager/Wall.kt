@@ -18,17 +18,17 @@ fun WallView() {
             topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
         )
         drawRect(
-            color = Color.Red,
+            color = Color.Black,
             size = Size(width = 250.dp.toPx(), height = 50.dp.toPx()),
             topLeft = Offset(x = 40.dp.toPx(), y = 10.dp.toPx())
         )
         drawRect(
-            color = Color.Blue,
+            color = Color.Black,
             size = Size(width = 290.dp.toPx(), height = 50.dp.toPx()),
             topLeft = Offset(x = -200.dp.toPx(), y = -40.dp.toPx())
         )
         drawRect(
-            color = Color.Green,
+            color = Color.Black,
             size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
             topLeft = Offset(x = -160.dp.toPx(), y = 70.dp.toPx())
         )
