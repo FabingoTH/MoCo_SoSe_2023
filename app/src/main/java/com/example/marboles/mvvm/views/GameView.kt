@@ -29,6 +29,7 @@ import com.example.marboles.mvvm.holes
 
 import com.example.marboles.mvvm.viewModels.GameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
+import com.example.marboles.mvvm.walls
 
 
 ///////////////
@@ -111,26 +112,12 @@ fun HoleView() {
 @Composable
 fun WallsLevelOne() {
     Canvas(modifier = Modifier) {
-        drawRect(
-            color = Color.Black,
-            size = Size(width = 50.dp.toPx(), height = 150.dp.toPx()),
-            topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
-        )
-        drawRect(
-            color = Color.Red,
-            size = Size(width = 250.dp.toPx(), height = 50.dp.toPx()),
-            topLeft = Offset(x = 40.dp.toPx(), y = 10.dp.toPx())
-        )
-        drawRect(
-            color = Color.Blue,
-            size = Size(width = 290.dp.toPx(), height = 50.dp.toPx()),
-            topLeft = Offset(x = -200.dp.toPx(), y = -40.dp.toPx())
-        )
-        drawRect(
-            color = Color.Green,
-            size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
-            topLeft = Offset(x = -160.dp.toPx(), y = 70.dp.toPx())
-        )
+        for (wall in walls){
+            drawRect(
+                color = Color.Black,
+                size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+            )}
     }
 }
 
