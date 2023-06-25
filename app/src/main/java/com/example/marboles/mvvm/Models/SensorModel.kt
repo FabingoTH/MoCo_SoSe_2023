@@ -151,10 +151,10 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         centerY : Float
     ): Boolean {
 
-        val goalLeftX = centerX - 10f
-        val goalRightX = centerX + 10f
-        val goalTopY = centerY - 10f
-        val goalBottomY = centerY + 10f
+        val goalLeftX = centerX - 30f
+        val goalRightX = centerX + 30f
+        val goalTopY = centerY - 30f
+        val goalBottomY = centerY + 30f
 
         val horizontalX = Range.create(goalLeftX, goalRightX)
         val verticalY = Range.create(goalTopY, goalBottomY)
