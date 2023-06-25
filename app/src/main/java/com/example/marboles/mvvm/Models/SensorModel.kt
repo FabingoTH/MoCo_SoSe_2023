@@ -9,10 +9,12 @@ import android.util.Range
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.marboles.GameState
+import com.example.marboles.mvvm.viewModels.SensorViewModel
 import com.example.marboles.mvvm.walls
 
 // MODEL
-class SensorModel (private val sensorManager : SensorManager) : SensorEventListener {
+class SensorModel (private val sensorManager : SensorManager, private val sensorViewModel: SensorViewModel) : SensorEventListener {
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
@@ -80,6 +82,13 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
             newY = collision.second
         }
 
+        if(checkGoalCollision(newX, newY, 160f, 135f)){
+            // _gameState.value = GameState.WON
+            sensorViewModel.gameState.value = GameState.GAMEOVER
+
+            println("Hole Collision!")
+        }
+
         // Neue Koordinaten festlegen
         coordinates = Offset(newX, newY)
         _accelerometerData.value = coordinates
@@ -127,6 +136,44 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
             }
         }
         return Pair(newX, newY)
+    }
+
+    private fun checkGoalCollision(
+        oldX: Float,
+        oldY: Float,
+        centerX : Float,
+        centerY : Float
+    ): Boolean {
+
+        val goalLeftX = centerX - 10f
+        val goalRightX = centerX + 10f
+        val goalTopY = centerY - 10f
+        val goalBottomY = centerY + 10f
+
+        val horizontalX = Range.create(goalLeftX, goalRightX)
+        val verticalY = Range.create(goalTopY, goalBottomY)
+        var collisionDetected = false
+
+        if (horizontalX.contains(newX) && verticalY.contains(newY)) {
+
+            // LINKS
+            if (oldX <= goalLeftX && horizontalX.contains(newX)) {
+                collisionDetected = true
+            }
+            // RECHTS
+            if (oldX >= goalRightX && horizontalX.contains(newX)) {
+                collisionDetected = true
+            }
+            // OBEN
+            if (oldY >= goalTopY && verticalY.contains(newY)) {
+                collisionDetected = true
+            }
+            // UNTEN
+            if (oldY <= goalBottomY && verticalY.contains(newY)) {
+                collisionDetected = true
+            }
+        }
+        return collisionDetected
     }
 
 
