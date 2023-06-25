@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.Flow
 interface HighscoreDao {
     // Suspend damit DB Operationen fertig laufen können bevor die App weiterläuft
     @Insert
-    fun insertHighscore(highscore : Highscore)
+    suspend fun insertHighscore(highscore : Highscore)
 
     @Delete
-    fun deleteHighscores(highscores : List<Highscore>)
+    suspend fun deleteHighscores(highscores : List<Highscore>)
 
     @Query("SELECT date, score FROM highscore ORDER BY score ASC")
-    fun getHighscoresByHighest() : List<Highscore>
+    suspend fun getHighscoresByHighest() : List<Highscore>?
 }
+

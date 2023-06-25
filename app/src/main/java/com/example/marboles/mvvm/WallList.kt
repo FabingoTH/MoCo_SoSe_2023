@@ -1,4 +1,4 @@
-package com.example.marboles.gamemanager
+package com.example.marboles.mvvm
 
 // Ich hab die Wandliste mal zu einer globalen Variable gemacht damit man im Model und im
 // View drauf zugreifen kann (Ich weiß nicht ob das von der Architektur her so stimmt? Aber

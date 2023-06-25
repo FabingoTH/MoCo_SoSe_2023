@@ -1,4 +1,4 @@
-package com.example.marboles.gamemanager
+package com.example.marboles.mvvm.models
 
 import android.content.res.Resources
 import android.hardware.Sensor
@@ -9,9 +9,10 @@ import android.util.Range
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.marboles.mvvm.walls
 
 // MODEL
-class SensorHandler (private val sensorManager : SensorManager) : SensorEventListener {
+class SensorModel (private val sensorManager : SensorManager) : SensorEventListener {
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
