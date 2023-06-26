@@ -65,10 +65,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
             SensorManager.getOrientation(remappedRotationMatrix, orientationAngles)
 
             // Werte aus dem Sensor
-            // xTilt = event.values[0]
-            // yTilt = -event.values[1]
-
-            // Werte aus dem Sensor
             xTilt = -orientationAngles[1]
             yTilt = -orientationAngles[2]
 

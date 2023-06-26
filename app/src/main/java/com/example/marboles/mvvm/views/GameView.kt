@@ -25,6 +25,7 @@ import androidx.compose.ui.zIndex
 import com.example.marboles.GameState
 
 import com.example.marboles.R
+import com.example.marboles.mvvm.borderwalls
 import com.example.marboles.mvvm.holes
 
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
@@ -62,6 +63,7 @@ fun BallScreen(
         Goal(160f, 135f)
         Ball(Modifier, ballCoordinates)
         WallsLevelOne()
+        Gameborders()
     }
 }
 
@@ -119,6 +121,20 @@ fun WallsLevelOne() {
         }
     }
 }
+
+@Composable
+fun Gameborders() {
+    Canvas(modifier = Modifier) {
+        for (wall in borderwalls){
+            drawRect(
+                color = Color.White,
+                size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+            )
+        }
+    }
+}
+
 
 
 ///////////////
