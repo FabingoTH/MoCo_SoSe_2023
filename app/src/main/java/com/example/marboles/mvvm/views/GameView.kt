@@ -93,8 +93,6 @@ fun Goal(centerX: Float, centerY: Float) {
     }
 }
 
-// TODO: Loch Composable für Game Over Condition
-
 @Composable
 fun HoleView() {
     for (hole in holes) {
@@ -114,10 +112,11 @@ fun WallsLevelOne() {
     Canvas(modifier = Modifier) {
         for (wall in walls){
             drawRect(
-                color = Color.Black,
+                color = Color(92, 64, 51),
                 size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
                 topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
-            )}
+            )
+        }
     }
 }
 
@@ -185,7 +184,6 @@ fun TopBar(
 
 @Composable
 fun PauseOverlay() {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -318,10 +316,10 @@ fun WinScreen(gameViewModel: ScoreGameViewModel, sensorViewModel: SensorViewMode
                                     .height(80.dp)
                                     .padding(10.dp),
                                 onClick = {
-                                    // TODO : sensorViewModel.resetGameState()
-                                    // Dann bräuchte man resetTimer auch nicht mehr
                                     sensorViewModel.gameState.value = GameState.PAUSED
                                     gameViewModel.resetTimer()
+                                    sensorViewModel.resetGameState()
+                                    // TODO: resetTimer und resetGamestate vereinen
                                     onClickHome()
                                 }
                             ) {
@@ -332,10 +330,10 @@ fun WinScreen(gameViewModel: ScoreGameViewModel, sensorViewModel: SensorViewMode
                                 .height(80.dp)
                                 .padding(10.dp),
                                 onClick = {
-                                    // TODO : sensorViewModel.resetGameState()
-                                    // Dann bräuchte man resetTimer auch nicht mehr
                                     sensorViewModel.gameState.value = GameState.INGAME
                                     gameViewModel.resetTimer()
+                                    sensorViewModel.resetGameState()
+                                    // TODO: resetTimer und resetGamestate vereinen
                                     onClickGame() // TODO : Next Level
                                 }
                             ) {
@@ -404,7 +402,10 @@ fun GameOverScreen(gameViewModel: ScoreGameViewModel, onClickHome: () -> Unit, o
                                     .width(150.dp)
                                     .height(80.dp)
                                     .padding(10.dp),
-                                onClick = onClickHome
+                                onClick = {
+                                    sensorViewModel.resetGameState()
+                                    onClickHome()
+                                }
                             ) {
                                 Text(text = "Home", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                             }
@@ -414,7 +415,8 @@ fun GameOverScreen(gameViewModel: ScoreGameViewModel, onClickHome: () -> Unit, o
                                 .padding(10.dp),
                                 onClick = {
                                     sensorViewModel.gameState.value = GameState.INGAME
-                                    // TODO : resetGameState(), dann kann resetTimer weg
+                                    // TODO : resetGameState() und resetTimer vereinen
+                                    sensorViewModel.resetGameState()
                                     gameViewModel.resetTimer()
                                     onClickGame()
                                 }
