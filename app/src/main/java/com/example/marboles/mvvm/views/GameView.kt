@@ -87,24 +87,30 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
 
 @Composable
 fun Goal(centerX: Float, centerY: Float) {
-    Canvas(modifier = Modifier) {
-        drawCircle(
-            color = Color.DarkGray, radius = 30.dp.toPx(), center =
-            Offset(x = centerX.dp.toPx(), y = centerY.dp.toPx())
-        )
-    }
+    Image(
+        modifier = Modifier
+            .offset(x = centerX.dp, y = centerY.dp)
+            .size(60.dp)
+            .clip(CircleShape),
+        painter = painterResource(id = R.drawable.goal),
+        contentDescription = "Ziel",
+        contentScale = ContentScale.Fit
+    )
 }
 
 @Composable
 fun HoleView() {
     for (hole in holes) {
-        Canvas(modifier = Modifier) {
-            drawCircle(
-                color = Color.Red,
-                radius = hole.radius.dp.toPx(),
-                center = Offset(x = hole.centerX.dp.toPx(), y = hole.centerY.dp.toPx())
-            )
-        }
+
+        Image(
+            modifier = Modifier
+                .offset(x = hole.centerX.dp, y = hole.centerY.dp)
+                .size(60.dp)
+                .clip(CircleShape),
+            painter = painterResource(id = R.drawable.hole),
+            contentDescription = "Loch",
+            contentScale = ContentScale.Fit
+        )
     }
 }
 
