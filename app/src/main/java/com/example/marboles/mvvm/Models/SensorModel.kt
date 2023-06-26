@@ -36,7 +36,7 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     var newY = 150f
 
     // Setze Startposition
-    val startPosition = Offset(10f, 150f)
+    private val startPosition = Offset(10f, 150f)
     var coordinates = startPosition
 
     private var mRotationMatrix = FloatArray(9)

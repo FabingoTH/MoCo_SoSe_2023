@@ -6,18 +6,7 @@ class Wall(
     val wallRightX: Float,
     val wallTopY: Float,
     val wallBottomY: Float
-) {
-}
-
-
-// drawRect(
-//            color = Color.Black,
-//            size = Size(width = 50.dp.toPx(), height = 50.dp.toPx()),
-//            topLeft = Offset(x = 40.dp.toPx(), y = 60.dp.toPx())
-//            wallLeft ergibt sich aus dem x-Wert von topLeft
-//            wallbottom aus dem y-Wert von topLeft
-//            wallRight ergibt sich aus dem x Wert von topLeft + width des Rechtecks
-//            wallTop aus dem y-Wert von topLeft + height des Rechtecks
+)
 
 val wall0 = Wall(40f, 90f, 250f, -100f) // OG Wand
 val wall1 = Wall(42f, 290f, 60f, 10f)
