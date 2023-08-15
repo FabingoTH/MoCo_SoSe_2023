@@ -6,5 +6,5 @@ import androidx.room.*
 data class Highscore (
     @PrimaryKey(autoGenerate = false) val id : Long? = null,
     @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "score") val score: Int // Time in Sekunden
+    @ColumnInfo(name = "score") val score: Int // Time" in Sekunden
 )

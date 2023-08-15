@@ -1,4 +1,4 @@
-package com.example.marboles.gamemanager
+package com.example.marboles.mvvm.Models
 
 import android.content.res.Resources
 import android.hardware.Sensor
@@ -9,9 +9,18 @@ import android.util.Range
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.marboles.GameState
+import com.example.marboles.mvvm.holes
+import com.example.marboles.mvvm.viewModels.SensorViewModel
+import com.example.marboles.mvvm.walls
 
 // MODEL
-class SensorHandler (private val sensorManager : SensorManager) : SensorEventListener {
+class SensorModel (private val sensorManager : SensorManager, private val sensorViewModel: SensorViewModel) : SensorEventListener {
+
+    // kleine Notiz: in einer mvvm-Architektur ist im Model eig keine Referenz auf das VM (siehe Argumentliste) - hier ist das ja nur für das enum/die States
+    // da, also nicht so tragisch, aber maybe können wir das nach nem zukünftigen merge einfach auf Model-Ebene packen um dann vom
+    // VM darauf zuzugreifen. Damit wir uns nicht selber ins bein schießen damit, und gesagt wird, wir haben "mvvm nicht richtig implementiert" (:
+
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
@@ -26,10 +35,11 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
     var newX = 10f
     var newY = 150f
 
-    // Startposition
-    var coordinates = Offset(10f, 150f)
+    // Setze Startposition
+    private val startPosition = Offset(10f, 150f)
+    var coordinates = startPosition
 
-    private var mRotationMatrix = FloatArray(16)
+    private var mRotationMatrix = FloatArray(9)
 
     init {
         accelerometerSensor?.let {
@@ -45,9 +55,18 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         if (event != null) {
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values)
 
-            // Rotationsmatrix, funktioniert immer aber bisher nur nach Osten
-            xTilt = mRotationMatrix[1]
-            yTilt = mRotationMatrix[0]
+            val remappedRotationMatrix = FloatArray(9)
+            SensorManager.remapCoordinateSystem(
+                mRotationMatrix,
+                SensorManager.AXIS_X, SensorManager.AXIS_Y, remappedRotationMatrix
+            )
+
+            val orientationAngles = FloatArray(3)
+            SensorManager.getOrientation(remappedRotationMatrix, orientationAngles)
+
+            // Werte aus dem Sensor
+            xTilt = -orientationAngles[1]
+            yTilt = -orientationAngles[2]
 
             updateCoordinates()
         }
@@ -79,6 +98,16 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             collision = checkCollision(oldX, oldY, newX, newY, wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY)
             newX = collision.first
             newY = collision.second
+        }
+
+        for(hole in holes) {
+            if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
+                sensorViewModel.gameState.value = GameState.GAMEOVER
+            }
+        }
+
+        if(checkGoalCollision(newX, newY, 160f, 135f)){
+            sensorViewModel.gameState.value = GameState.WON
         }
 
         // Neue Koordinaten festlegen
@@ -135,10 +164,10 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
         centerY : Float
     ): Boolean {
 
-        val goalLeftX = centerX - 10f
-        val goalRightX = centerX + 10f
-        val goalTopY = centerY - 10f
-        val goalBottomY = centerY + 10f
+        val goalLeftX = centerX - 30f
+        val goalRightX = centerX + 30f
+        val goalTopY = centerY - 30f
+        val goalBottomY = centerY + 30f
 
         val horizontalX = Range.create(goalLeftX, goalRightX)
         val verticalY = Range.create(goalTopY, goalBottomY)
@@ -148,7 +177,7 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
 
             // LINKS
             if (oldX <= goalLeftX && horizontalX.contains(newX)) {
-
+                collisionDetected = true
             }
             // RECHTS
             if (oldX >= goalRightX && horizontalX.contains(newX)) {
@@ -162,14 +191,13 @@ class SensorHandler (private val sensorManager : SensorManager) : SensorEventLis
             if (oldY <= goalBottomY && verticalY.contains(newY)) {
                 collisionDetected = true
             }
-
         }
         return collisionDetected
     }
-
-
-
-
+    fun resetBallCoordinates(){
+        coordinates = startPosition
+        _accelerometerData.value = coordinates
+    }
 
     // Brauchen wir in diesem Fall nicht
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
