@@ -25,12 +25,10 @@ import androidx.compose.ui.zIndex
 import com.example.marboles.GameState
 
 import com.example.marboles.R
-import com.example.marboles.mvvm.borderwalls
-import com.example.marboles.mvvm.holes
+import com.example.marboles.mvvm.*
 
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
-import com.example.marboles.mvvm.walls
 
 
 ///////////////
@@ -42,7 +40,8 @@ fun BallScreen(
     sensorViewModel: SensorViewModel,
     gameViewModel: ScoreGameViewModel,
     onClickHome: () -> Unit,
-    onClickScore: () -> Unit
+    onClickScore: () -> Unit,
+    levelNumber: Int
 ) {
 
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
@@ -59,10 +58,25 @@ fun BallScreen(
             .background(Color.Transparent)
     )
     {
-        HoleView()
-        Goal(160f, 135f)
-        Ball(Modifier, ballCoordinates)
-        WallsLevelOne()
+
+        when (levelNumber) {
+            1 -> {
+                HoleView(levelNumber)
+                Goal(160f, 135f)
+                WallView(levelNumber)
+            }
+
+            2 -> {
+                HoleView(levelNumber)
+                Goal(50f, 120f)
+                WallView(levelNumber)
+            }
+
+            3 -> {
+                // usw.
+            }
+        }
+        Ball(Modifier, ballCoordinates) // Muss der Ball nach dem Rest Spielfeld?
         Gameborders()
     }
 }
@@ -99,32 +113,67 @@ fun Goal(centerX: Float, centerY: Float) {
 }
 
 @Composable
-fun HoleView() {
-    for (hole in holes) {
+fun HoleView(levelNumber : Int) {
+    when(levelNumber){
+        1 -> {
+            for (hole in holesLevelOne) {
+                Image(
+                    modifier = Modifier
+                        .offset(x = hole.centerX.dp, y = hole.centerY.dp)
+                        .size(60.dp)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.drawable.hole),
+                    contentDescription = "Loch",
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
 
-        Image(
-            modifier = Modifier
-                .offset(x = hole.centerX.dp, y = hole.centerY.dp)
-                .size(60.dp)
-                .clip(CircleShape),
-            painter = painterResource(id = R.drawable.hole),
-            contentDescription = "Loch",
-            contentScale = ContentScale.Fit
-        )
+        2 -> {
+            for (hole in holesLevelTwo) {
+                Image(
+                    modifier = Modifier
+                        .offset(x = hole.centerX.dp, y = hole.centerY.dp)
+                        .size(60.dp)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.drawable.hole),
+                    contentDescription = "Loch",
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
+
+        else -> throw Exception("Dieses Level existiert noch nicht.")
     }
+
 }
 
 // WAND
 @Composable
-fun WallsLevelOne() {
+fun WallView(levelNumber : Int) {
     Canvas(modifier = Modifier) {
-        for (wall in walls){
-            drawRect(
-                color = Color(92, 64, 51),
-                size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
-                topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
-            )
+        when(levelNumber){
+            1 -> {
+                for (wall in wallsLevelOne){
+                    drawRect(
+                        color = Color(92, 64, 51),
+                        size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                        topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+                    )
+                }
+            }
+
+            2 -> {
+                for (wall in wallsLevelTwo){
+                    drawRect(
+                        color = Color(92, 64, 51),
+                        size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                        topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+                    )
+                }
+            }
         }
+
     }
 }
 

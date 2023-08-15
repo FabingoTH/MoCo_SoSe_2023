@@ -1,14 +1,11 @@
 package com.example.marboles.mvvm
 
-import androidx.compose.ui.unit.dp
 class Wall(
     val wallLeftX: Float,
     val wallRightX: Float,
     val wallTopY: Float,
     val wallBottomY: Float
 )
-
-
 
 val wall0 = Wall(80f, 90f, 180f, -100f) // OG Wand
 val wall1 = Wall(90f, 290f, 60f, 50f)
@@ -23,6 +20,7 @@ val borderbottom = Wall(-380f, 380f, 190f, 180f)
 val bordertop = Wall(-380f, 380f, -190f, -180f)
 
 
-var walls = listOf(wall0, wall1, wall2)
+var wallsLevelOne = listOf(wall0, wall1, wall2)
+var wallsLevelTwo = listOf(wall0, wall1) // Nur zum Testen, Platzhalter
 
 var borderwalls = listOf(borderleft, borderright, bordertop, borderbottom)

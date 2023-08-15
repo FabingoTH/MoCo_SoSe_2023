@@ -10,9 +10,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.marboles.GameState
-import com.example.marboles.mvvm.holes
+import com.example.marboles.mvvm.*
 import com.example.marboles.mvvm.viewModels.SensorViewModel
-import com.example.marboles.mvvm.walls
 
 // MODEL
 class SensorModel (private val sensorManager : SensorManager, private val sensorViewModel: SensorViewModel) : SensorEventListener {
@@ -94,20 +93,55 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         // Loopen durch alle Wände
         var collision : Pair<Float, Float>
-        for(wall in walls){
-            collision = checkCollision(oldX, oldY, newX, newY, wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY)
-            newX = collision.first
-            newY = collision.second
-        }
+        val levelNumberTest = 2 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
+        // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
 
-        for(hole in holes) {
-            if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
-                sensorViewModel.gameState.value = GameState.GAMEOVER
+        when (levelNumberTest) {
+            1 -> {
+                for(wall in wallsLevelOne){
+                    collision = checkCollision(
+                        oldX, oldY, newX, newY,
+                        wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY
+                    )
+                    newX = collision.first
+                    newY = collision.second
+                }
+
+                for(hole in holesLevelOne) {
+                    if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
+                        sensorViewModel.gameState.value = GameState.GAMEOVER
+                    }
+                }
+
+                if(checkGoalCollision(newX, newY, levelOneGoal.centerX, levelOneGoal.centerY)){
+                    sensorViewModel.gameState.value = GameState.WON
+                }
             }
-        }
 
-        if(checkGoalCollision(newX, newY, 160f, 135f)){
-            sensorViewModel.gameState.value = GameState.WON
+            2 -> {
+                for (wall in wallsLevelTwo) {
+                    collision = checkCollision(
+                        oldX, oldY, newX, newY,
+                        wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY
+                    )
+                    newX = collision.first
+                    newY = collision.second
+                }
+
+                for(hole in holesLevelTwo) {
+                    if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
+                        sensorViewModel.gameState.value = GameState.GAMEOVER
+                    }
+                }
+
+                if(checkGoalCollision(newX, newY, levelTwoGoal.centerX, levelTwoGoal.centerY)){
+                    sensorViewModel.gameState.value = GameState.WON
+                }
+            }
+
+            3 -> {
+                // TODO
+            }
         }
 
         // Neue Koordinaten festlegen
