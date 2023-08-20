@@ -21,6 +21,37 @@ val bordertop = Wall(-380f, 380f, -190f, -180f)
 
 
 var wallsLevelOne = listOf(wall0, wall1, wall2)
-var wallsLevelTwo = listOf(wall0, wall1) // Nur zum Testen, Platzhalter
+//var wallsLevelTwo = listOf(wall0, wall1) // Nur zum Testen, Platzhalter
+
+// ich probiere hier nur mal ne andere Schreibweise aus, Collisions müssten dann noch funktionieren oder?
+
+var wallsLevelTwo = listOf(
+    Wall(-380f, 300f, 5f, -5f), // OG Wand
+    Wall(-200f, -190f, 110f, -110f),
+    Wall(100f, 110f, 110f, -110f),
+    Wall(-5f, 5f, 380f, 300f),
+    Wall(-5f, 5f, -300f, -380f)
+)
+
+var wallsLevelThree = listOf(
+    Wall(-380f, 300f, 5f, -5f), // OG Wand
+    Wall(-200f, -190f, 110f, -110f),
+    Wall(100f, 110f, 110f, -110f),
+    Wall(-5f, 5f, 380f, 300f),
+    Wall(-5f, 5f, -300f, -380f)
+)
+
+var wallsLevelFour = listOf(
+    Wall(80f, 90f, 180f, -100f), // OG Wand
+    Wall(90f, 290f, 60f, 50f),
+    Wall(-200f, 80f, 10f, 0f)
+)
+
+var wallsLevelFive = listOf(
+    Wall(80f, 90f, 180f, -100f), // OG Wand
+    Wall(90f, 290f, 60f, 50f),
+    Wall(-200f, 80f, 10f, 0f)
+)
+
 
 var borderwalls = listOf(borderleft, borderright, bordertop, borderbottom)

@@ -62,18 +62,20 @@ fun BallScreen(
         when (levelNumber) {
             1 -> {
                 HoleView(levelNumber)
-                Goal(160f, 135f)
+                GoalView(levelNumber)
                 WallView(levelNumber)
             }
 
             2 -> {
                 HoleView(levelNumber)
-                Goal(50f, 120f)
+                GoalView(levelNumber)
                 WallView(levelNumber)
             }
 
             3 -> {
-                // usw.
+                HoleView(levelNumber)
+                GoalView(levelNumber)
+                WallView(levelNumber)
             }
         }
         Ball(Modifier, ballCoordinates) // Muss der Ball nach dem Rest Spielfeld?
@@ -99,7 +101,7 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
     )
 }
 
-@Composable
+/*@Composable
 fun Goal(centerX: Float, centerY: Float) {
     Image(
         modifier = Modifier
@@ -110,6 +112,35 @@ fun Goal(centerX: Float, centerY: Float) {
         contentDescription = "Ziel",
         contentScale = ContentScale.Fit
     )
+}
+*/
+@Composable
+fun GoalView(levelNumber : Int) {
+    when(levelNumber){
+        1 -> {
+            Image(
+                modifier = Modifier
+                    .offset(x = levelOneGoal.centerX.dp, y = levelOneGoal.centerY.dp)
+                    .size(60.dp)
+                    .clip(CircleShape),
+                painter = painterResource(id = R.drawable.goal),
+                contentDescription = "Ziel",
+                contentScale = ContentScale.Fit
+            )
+        }
+        2 -> {
+            Image(
+                modifier = Modifier
+                    .offset(x = levelTwoGoal.centerX.dp, y = levelTwoGoal.centerY.dp)
+                    .size(60.dp)
+                    .clip(CircleShape),
+                painter = painterResource(id = R.drawable.goal),
+                contentDescription = "Ziel",
+                contentScale = ContentScale.Fit
+            )
+        }
+
+    }
 }
 
 @Composable

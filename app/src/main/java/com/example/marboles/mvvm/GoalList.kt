@@ -6,4 +6,4 @@ class Goal (
 )
 
 val levelOneGoal = Goal(160f, 135f)
-val levelTwoGoal = Goal(50f, 140f) // Platzhalter
+val levelTwoGoal = Goal(-300f, -90f) // Platzhalter
