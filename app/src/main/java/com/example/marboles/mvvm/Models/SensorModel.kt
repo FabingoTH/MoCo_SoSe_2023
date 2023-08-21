@@ -80,8 +80,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         newX = oldX + xTilt * ballSpeed
         newY = oldY + yTilt * ballSpeed
 
-
-
         // Checks, ob der Ball noch im Feld ist
         // Magische Nummern, Bound Check funktioniert bei mir nur mit diesen Werten
         // TODO: Statt Magic Numbers Screen Size berechnen
@@ -92,56 +90,50 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         if (newY > 155f) { newY = 155f }
 
         // Loopen durch alle Wände
-        var collision : Pair<Float, Float>
-        val levelNumberTest = 2 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
+        var collision : Pair<Float, Float> = Pair(startPosition.x, startPosition.y)
+        val levelNumberTest = 4 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
         // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
 
         when (levelNumberTest) {
-            1 -> {
-                for(wall in wallsLevelOne){
-                    collision = checkCollision(
-                        oldX, oldY, newX, newY,
-                        wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY
-                    )
-                    newX = collision.first
-                    newY = collision.second
-                }
+            1 -> buildLevel (
+                wallsLevelOne,
+                holesLevelOne,
+                levelOneGoal.centerX, levelOneGoal.centerY,
+                collision,
+                oldX, oldY
+            )
 
-                for(hole in holesLevelOne) {
-                    if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
-                        sensorViewModel.gameState.value = GameState.GAMEOVER
-                    }
-                }
+            2 -> buildLevel (
+                wallsLevelTwo,
+                holesLevelTwo,
+                levelTwoGoal.centerX, levelTwoGoal.centerY,
+                collision,
+                oldX, oldY
+            )
 
-                if(checkGoalCollision(newX, newY, levelOneGoal.centerX, levelOneGoal.centerY)){
-                    sensorViewModel.gameState.value = GameState.WON
-                }
-            }
+            3 -> buildLevel (
+                wallsLevelThree,
+                holesLevelThree,
+                levelThreeGoal.centerX, levelThreeGoal.centerY,
+                collision,
+                oldX, oldY
+            )
 
-            2 -> {
-                for (wall in wallsLevelTwo) {
-                    collision = checkCollision(
-                        oldX, oldY, newX, newY,
-                        wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY
-                    )
-                    newX = collision.first
-                    newY = collision.second
-                }
+            4 -> buildLevel (
+                wallsLevelFour,
+                holesLevelFour,
+                levelFourGoal.centerX, levelFourGoal.centerY,
+                collision,
+                oldX, oldY
+            )
 
-                for(hole in holesLevelTwo) {
-                    if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
-                        sensorViewModel.gameState.value = GameState.GAMEOVER
-                    }
-                }
-
-                if(checkGoalCollision(newX, newY, levelTwoGoal.centerX, levelTwoGoal.centerY)){
-                    sensorViewModel.gameState.value = GameState.WON
-                }
-            }
-
-            3 -> {
-                // TODO
-            }
+            5 -> buildLevel (
+                wallsLevelFive,
+                holesLevelFive,
+                levelFiveGoal.centerX, levelFiveGoal.centerY,
+                collision,
+                oldX, oldY
+            )
         }
 
         // Neue Koordinaten festlegen
@@ -231,6 +223,32 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     fun resetBallCoordinates(){
         coordinates = startPosition
         _accelerometerData.value = coordinates
+    }
+
+    private fun buildLevel(wallList : List<Wall>, holeList : List<Hole>,
+                           goalCenterX : Float, goalCenterY : Float,
+                           collision : Pair<Float, Float>,
+                           oldX: Float, oldY: Float)
+    {
+        for(wall in wallList){
+            var localCollision = collision
+            localCollision = checkCollision (
+                oldX, oldY, newX, newY,
+                wall.wallLeftX, wall.wallRightX, wall.wallTopY, wall.wallBottomY
+            )
+            newX = localCollision.first
+            newY = localCollision.second
+        }
+
+        for(hole in holeList) {
+            if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
+                sensorViewModel.gameState.value = GameState.GAMEOVER
+            }
+        }
+
+        if(checkGoalCollision(newX, newY, goalCenterX, goalCenterY)){
+            sensorViewModel.gameState.value = GameState.WON
+        }
     }
 
     // Brauchen wir in diesem Fall nicht

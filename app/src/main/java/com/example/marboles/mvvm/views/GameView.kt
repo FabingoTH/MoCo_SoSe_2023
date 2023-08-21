@@ -77,6 +77,20 @@ fun BallScreen(
                 GoalView(levelNumber)
                 WallView(levelNumber)
             }
+
+            4 -> {
+                HoleView(levelNumber)
+                GoalView(levelNumber)
+                WallView(levelNumber)
+            }
+
+            5 -> {
+                HoleView(levelNumber)
+                GoalView(levelNumber)
+                WallView(levelNumber)
+            }
+
+            else -> throw Exception("Level kann nicht gebaut werden... Weil es dieses noch nicht gibt")
         }
         Ball(Modifier, ballCoordinates) // Muss der Ball nach dem Rest Spielfeld?
         Gameborders()
@@ -140,6 +154,43 @@ fun GoalView(levelNumber : Int) {
             )
         }
 
+        3 -> {
+            Image(
+                modifier = Modifier
+                    .offset(x = levelThreeGoal.centerX.dp, y = levelThreeGoal.centerY.dp)
+                    .size(60.dp)
+                    .clip(CircleShape),
+                painter = painterResource(id = R.drawable.goal),
+                contentDescription = "Ziel",
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        4 -> {
+            Image(
+                modifier = Modifier
+                    .offset(x = levelFourGoal.centerX.dp, y = levelFourGoal.centerY.dp)
+                    .size(60.dp)
+                    .clip(CircleShape),
+                painter = painterResource(id = R.drawable.goal),
+                contentDescription = "Ziel",
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        5 -> {
+            Image(
+                modifier = Modifier
+                    .offset(x = levelFiveGoal.centerX.dp, y = levelFiveGoal.centerY.dp)
+                    .size(60.dp)
+                    .clip(CircleShape),
+                painter = painterResource(id = R.drawable.goal),
+                contentDescription = "Ziel",
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        else -> throw Exception("Ziel fehlgeschlagen. Dieses Level existiert noch nicht ;)")
     }
 }
 
@@ -174,7 +225,48 @@ fun HoleView(levelNumber : Int) {
             }
         }
 
-        else -> throw Exception("Dieses Level existiert noch nicht.")
+        3 -> {
+            for (hole in holesLevelThree) {
+                Image(
+                    modifier = Modifier
+                        .offset(x = hole.centerX.dp, y = hole.centerY.dp)
+                        .size(60.dp)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.drawable.hole),
+                    contentDescription = "Loch",
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
+
+        4 -> {
+            for (hole in holesLevelFour) {
+                Image(
+                    modifier = Modifier
+                        .offset(x = hole.centerX.dp, y = hole.centerY.dp)
+                        .size(60.dp)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.drawable.hole),
+                    contentDescription = "Loch",
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
+
+        5 -> {
+            for (hole in holesLevelFive) {
+                Image(
+                    modifier = Modifier
+                        .offset(x = hole.centerX.dp, y = hole.centerY.dp)
+                        .size(60.dp)
+                        .clip(CircleShape),
+                    painter = painterResource(id = R.drawable.hole),
+                    contentDescription = "Loch",
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
+        else -> throw Exception("Löcher fehlgeschlagen. Dieses Level existiert noch nicht.")
     }
 
 }
@@ -203,6 +295,38 @@ fun WallView(levelNumber : Int) {
                     )
                 }
             }
+
+            3 -> {
+                for (wall in wallsLevelThree){
+                    drawRect(
+                        color = Color(92, 64, 51),
+                        size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                        topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+                    )
+                }
+            }
+
+            4 -> {
+                for (wall in wallsLevelFour){
+                    drawRect(
+                        color = Color(92, 64, 51),
+                        size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                        topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+                    )
+                }
+            }
+
+            5 -> {
+                for (wall in wallsLevelFive){
+                    drawRect(
+                        color = Color(92, 64, 51),
+                        size = Size(width = wall.wallRightX.dp.toPx() - wall.wallLeftX.dp.toPx(), height = wall.wallBottomY.dp.toPx() - wall.wallTopY.dp.toPx()),
+                        topLeft = Offset( x= wall.wallLeftX.dp.toPx(), y = wall.wallTopY.dp.toPx())
+                    )
+                }
+            }
+
+            else -> throw Exception("Wände fehlgeschlagen. Dieses Level existiert noch nicht.")
         }
 
     }
