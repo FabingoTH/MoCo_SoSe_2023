@@ -43,6 +43,9 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
     private var mRotationMatrix = FloatArray(9)
 
+    var levelNumberTest = 1 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
+    // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
+
     init {
         accelerometerSensor?.let {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
@@ -94,8 +97,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         // Loopen durch alle Wände
         var collision : Pair<Float, Float> = Pair(startPosition.x, startPosition.y)
-        val levelNumberTest = 5 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
-        // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
 
         when (levelNumberTest) {
             1 -> buildLevel (
@@ -251,6 +252,8 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         if(checkGoalCollision(newX, newY, goalCenterX, goalCenterY)){
             sensorViewModel.gameState.value = GameState.WON
+            levelNumberTest++
+            println("$levelNumberTest Hello")
         }
     }
 

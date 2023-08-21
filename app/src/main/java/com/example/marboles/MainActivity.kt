@@ -73,9 +73,9 @@ fun NavigationManager(
     navController: NavHostController,
     levelViewModel: LevelViewModel,
     sensorViewModel: SensorViewModel,
-    scoreGameViewModel: ScoreGameViewModel,
-
+    scoreGameViewModel: ScoreGameViewModel
 ) {
+    var currentLevel = 1
 
     CompositionLocalProvider(LocalNavController provides navController) {
         NavHost(navController = navController, startDestination = "home") {
@@ -103,13 +103,16 @@ fun NavigationManager(
                             scoreGameViewModel,
                             { navController.navigate("home") },
                             { navController.navigate("score") },
-                            5 // TODO: SEHR WICHTIG hier nur ein Platzhalter zum testen !!11!!1!
+                            currentLevel // TODO: SEHR WICHTIG hier nur ein Platzhalter zum testen !!11!!1!
                         // TODO: Das aktuelle Level muss irgendwo noch global getrackt werden.
                         )
                     }
                     GameState.WON -> {
                         LaunchedEffect(key1 = winEffectKey) {
+                            currentLevel++
+                            levelViewModel.unlockLevel(currentLevel)
                             navController.navigate("win")
+                            println(currentLevel)
                         }
                     }
                     GameState.GAMEOVER -> {

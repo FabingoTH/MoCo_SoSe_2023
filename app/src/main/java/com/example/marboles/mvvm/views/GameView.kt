@@ -92,7 +92,7 @@ fun BallScreen(
 
             else -> throw Exception("Level kann nicht gebaut werden... Weil es dieses noch nicht gibt")
         }
-        Ball(Modifier, ballCoordinates) // Muss der Ball nach dem Rest Spielfeld?
+        Ball(Modifier, ballCoordinates)
         Gameborders()
     }
 }
@@ -142,6 +142,7 @@ fun GoalView(levelNumber : Int) {
                 contentScale = ContentScale.Fit
             )
         }
+
         2 -> {
             Image(
                 modifier = Modifier
@@ -210,6 +211,7 @@ fun HoleView(levelNumber : Int) {
                 )
             }
         }
+
         2 -> {
             for (hole in holesLevelTwo) {
                 Image(
@@ -266,6 +268,7 @@ fun HoleView(levelNumber : Int) {
                 )
             }
         }
+
         else -> throw Exception("Löcher fehlgeschlagen. Dieses Level existiert noch nicht.")
     }
 
@@ -344,8 +347,6 @@ fun Gameborders() {
         }
     }
 }
-
-
 
 ///////////////
 /// SCREENS ///
