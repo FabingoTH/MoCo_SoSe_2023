@@ -103,7 +103,7 @@ fun NavigationManager(
                             scoreGameViewModel,
                             { navController.navigate("home") },
                             { navController.navigate("score") },
-                            2 // TODO: SEHR WICHTIG hier nur ein Platzhalter zum testen !!11!!1!
+                            5 // TODO: SEHR WICHTIG hier nur ein Platzhalter zum testen !!11!!1!
                         // TODO: Das aktuelle Level muss irgendwo noch global getrackt werden.
                         )
                     }

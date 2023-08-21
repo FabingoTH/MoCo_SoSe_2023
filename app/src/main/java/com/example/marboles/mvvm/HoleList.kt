@@ -17,9 +17,20 @@ val hole5 = Hole(30f, 320f, -120f)
 val hole6 = Hole(30f, 200f, 0f)
 val hole7 = Hole(30f, -330f, -130f)
 
+val hole8 = Hole(30f, 0f, 0f)
+val hole9 = Hole(30f, 0f, 120f)
+val hole10 = Hole(30f, 0f, -120f)
+
+
 
 val holesLevelOne = listOf(hole0, hole1, hole2)
 val holesLevelTwo = listOf(hole3, hole4)
 val holesLevelThree = listOf(hole5, hole6, hole7)
-val holesLevelFour = listOf(hole5, hole6, hole7) // // Platzhalter. TODO: Mit echtem Leveldesign ersetzen
-val holesLevelFive = listOf(hole5, hole6, hole7) // TODO
+val holesLevelFour = listOf(hole5, hole6, hole7, hole8, hole9, hole10) // // Platzhalter. TODO: Mit echtem Leveldesign ersetzen
+val holesLevelFive = listOf(
+    Hole(30f, -60f, -100f),
+    Hole(30f, -60f, 100f),
+    Hole(30f, 100f, -140f),
+    Hole(30f, 100f, 140f),
+    hole5,
+) // TODO

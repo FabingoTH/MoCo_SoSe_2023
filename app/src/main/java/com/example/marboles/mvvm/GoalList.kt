@@ -8,5 +8,5 @@ class Goal (
 val levelOneGoal = Goal(160f, 135f)
 val levelThreeGoal = Goal(320f, 120f)
 val levelTwoGoal = Goal(-300f, -90f)
-val levelFourGoal = Goal (320f, 120f) // Platzhalter
-val levelFiveGoal = Goal (320f, 120f) // Platzhalter
+val levelFourGoal = Goal (320f, 120f)
+val levelFiveGoal = Goal (-300f, -90f)

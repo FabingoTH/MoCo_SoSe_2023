@@ -94,7 +94,7 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         // Loopen durch alle Wände
         var collision : Pair<Float, Float> = Pair(startPosition.x, startPosition.y)
-        val levelNumberTest = 2 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
+        val levelNumberTest = 5 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
         // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
 
         when (levelNumberTest) {
