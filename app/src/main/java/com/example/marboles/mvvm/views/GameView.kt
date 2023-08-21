@@ -210,7 +210,6 @@ fun HoleView(levelNumber : Int) {
                 )
             }
         }
-
         2 -> {
             for (hole in holesLevelTwo) {
                 Image(
@@ -237,6 +236,7 @@ fun HoleView(levelNumber : Int) {
                     contentScale = ContentScale.Fit
                 )
             }
+
         }
 
         4 -> {

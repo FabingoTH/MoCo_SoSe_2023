@@ -35,7 +35,10 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     var newY = 150f
 
     // Setze Startposition
-    private val startPosition = Offset(10f, 150f)
+    //private val startPosition = Offset(10f, 150f)
+
+    //Ersatz-Startposition, falls es mit dem Sensor was kaputt machen sollte
+    private val startPosition = Offset(-320f, 150f)
     var coordinates = startPosition
 
     private var mRotationMatrix = FloatArray(9)
@@ -91,7 +94,7 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         // Loopen durch alle Wände
         var collision : Pair<Float, Float> = Pair(startPosition.x, startPosition.y)
-        val levelNumberTest = 4 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
+        val levelNumberTest = 2 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
         // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
 
         when (levelNumberTest) {

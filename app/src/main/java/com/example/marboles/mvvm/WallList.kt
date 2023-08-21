@@ -34,24 +34,33 @@ var wallsLevelTwo = listOf(
 )
 
 var wallsLevelThree = listOf(
-    Wall(-380f, 300f, 5f, -5f), // OG Wand
-    Wall(-200f, -190f, 110f, -110f),
-    Wall(100f, 110f, 110f, -110f),
-    Wall(-5f, 5f, 380f, 300f),
-    Wall(-5f, 5f, -300f, -380f)
+    Wall(-380f, -50f, -70f, -80f),
+    Wall(-270f, -260f, 70f, -70f),
+    Wall(-150f, -140f, 180f, 40f),
+    Wall(20f, 30f, 180f, -70f),
+    Wall(120f, 130f, 180f, 60f),
+    Wall(120f, 130f, -60f, -180f),
+    Wall(200f, 380f, -40f, -50f)
 )
 
 var wallsLevelFour = listOf(
-    Wall(80f, 90f, 180f, -100f), // OG Wand
-    Wall(90f, 290f, 60f, 50f),
-    Wall(-200f, 80f, 10f, 0f)
+    Wall(-380f, -50f, -70f, -80f),
+    Wall(-270f, -260f, 70f, -70f),
+    Wall(-150f, -140f, 180f, 40f),
+    Wall(20f, 30f, 180f, -70f),
+    Wall(120f, 130f, 180f, 60f),
+    Wall(120f, 130f, -60f, -180f),
+    Wall(200f, 380f, -40f, -50f)
 )
 
 var wallsLevelFive = listOf(
-    Wall(80f, 90f, 180f, -100f), // OG Wand
-    Wall(90f, 290f, 60f, 50f),
-    Wall(-200f, 80f, 10f, 0f)
+    Wall(-380f, -50f, -70f, -80f),
+    Wall(-270f, -260f, 70f, -70f),
+    Wall(-150f, -140f, 180f, 40f),
+    Wall(20f, 30f, 180f, -70f),
+    Wall(120f, 130f, 180f, 60f),
+    Wall(120f, 130f, -60f, -180f),
+    Wall(200f, 380f, -40f, -50f)
 )
-
 
 var borderwalls = listOf(borderleft, borderright, bordertop, borderbottom)
