@@ -75,7 +75,7 @@ fun NavigationManager(
     sensorViewModel: SensorViewModel,
     scoreGameViewModel: ScoreGameViewModel
 ) {
-    var currentLevel = 1
+    var currentLevel = sensorViewModel.levelNumber.observeAsState()
 
     CompositionLocalProvider(LocalNavController provides navController) {
         NavHost(navController = navController, startDestination = "home") {
@@ -103,16 +103,17 @@ fun NavigationManager(
                             scoreGameViewModel,
                             { navController.navigate("home") },
                             { navController.navigate("score") },
-                            currentLevel // TODO: SEHR WICHTIG hier nur ein Platzhalter zum testen !!11!!1!
-                        // TODO: Das aktuelle Level muss irgendwo noch global getrackt werden.
+                            currentLevel.value!!
                         )
                     }
                     GameState.WON -> {
                         LaunchedEffect(key1 = winEffectKey) {
-                            currentLevel++
-                            levelViewModel.unlockLevel(currentLevel)
+                            levelViewModel.unlockLevel(currentLevel.value!!)
                             navController.navigate("win")
-                            println(currentLevel)
+
+                            println(currentLevel.value)
+                            // Ok ich hab keine Ahnung wieso aber irgendwie skippt der immer Lvl 4
+                            // Und bei Lvl 2 ist Game Over und bei Retry next Level hää?
                         }
                     }
                     GameState.GAMEOVER -> {

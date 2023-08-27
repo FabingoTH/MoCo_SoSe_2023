@@ -14,9 +14,10 @@ import com.example.marboles.mvvm.Models.SensorModel
 class SensorViewModel(context : Context) : ViewModel() {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val sensorModel = SensorModel(sensorManager, this)
-    val gameState: MutableLiveData<GameState> = MutableLiveData(GameState.INGAME)
+    val gameState : MutableLiveData<GameState> = MutableLiveData(GameState.INGAME)
 
     val ballCoordinates : LiveData<Offset> = sensorModel.accelerometerData
+    val levelNumber : LiveData<Int> = sensorModel.levelNumber
 
     fun resetGameState() {
         sensorModel.resetBallCoordinates()

@@ -15,11 +15,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.marboles.GameState
@@ -29,7 +31,6 @@ import com.example.marboles.mvvm.*
 
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
-
 
 ///////////////
 // GAMEFIELD //
@@ -90,7 +91,8 @@ fun BallScreen(
                 WallView(levelNumber)
             }
 
-            else -> throw Exception("Level kann nicht gebaut werden... Weil es dieses noch nicht gibt")
+            // else -> throw Exception("Level kann nicht gebaut werden... Weil es dieses noch nicht gibt")
+            else -> ToBeContinued()
         }
         Ball(Modifier, ballCoordinates)
         Gameborders()
@@ -115,19 +117,6 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
     )
 }
 
-/*@Composable
-fun Goal(centerX: Float, centerY: Float) {
-    Image(
-        modifier = Modifier
-            .offset(x = centerX.dp, y = centerY.dp)
-            .size(60.dp)
-            .clip(CircleShape),
-        painter = painterResource(id = R.drawable.goal),
-        contentDescription = "Ziel",
-        contentScale = ContentScale.Fit
-    )
-}
-*/
 @Composable
 fun GoalView(levelNumber : Int) {
     when(levelNumber){
@@ -191,7 +180,8 @@ fun GoalView(levelNumber : Int) {
             )
         }
 
-        else -> throw Exception("Ziel fehlgeschlagen. Dieses Level existiert noch nicht ;)")
+        // else -> throw Exception("Ziel fehlgeschlagen. Dieses Level existiert noch nicht ;)")
+        else -> { /* Do Nothing */ }
     }
 }
 
@@ -269,7 +259,8 @@ fun HoleView(levelNumber : Int) {
             }
         }
 
-        else -> throw Exception("Löcher fehlgeschlagen. Dieses Level existiert noch nicht.")
+        // else -> throw Exception("Löcher fehlgeschlagen. Dieses Level existiert noch nicht.")
+        else -> { /* Do Nothing */ }
     }
 
 }
@@ -329,7 +320,8 @@ fun WallView(levelNumber : Int) {
                 }
             }
 
-            else -> throw Exception("Wände fehlgeschlagen. Dieses Level existiert noch nicht.")
+            // else -> throw Exception("Wände fehlgeschlagen. Dieses Level existiert noch nicht.")
+            else -> { /* Do Nothing */ }
         }
 
     }
@@ -660,6 +652,22 @@ fun GameOverScreen(gameViewModel: ScoreGameViewModel, onClickHome: () -> Unit, o
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ToBeContinued(){
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+    )
+    {
+        Text(
+            text = "To Be Continued...",
+            style = TextStyle(fontSize = 20.sp)
+        )
     }
 }
 

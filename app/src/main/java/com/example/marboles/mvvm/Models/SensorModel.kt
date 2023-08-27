@@ -43,9 +43,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
     private var mRotationMatrix = FloatArray(9)
 
-    var levelNumberTest = 1 // TODO SEHR WICHTIG HIER IST DIESE 2 NUR EIN PLATZHALTER
-    // TODO Das tatsächliche aktuelle Level muss noch gobal irgwndwo getrackt werden!
-
     init {
         accelerometerSensor?.let {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
@@ -54,7 +51,10 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     }
 
     private val _accelerometerData = MutableLiveData<Offset>()
-    val accelerometerData: LiveData<Offset> = _accelerometerData // Read-only
+    val accelerometerData : LiveData<Offset> = _accelerometerData // Read-only
+
+    private val _levelNumber = MutableLiveData<Int>(1)
+    val levelNumber : LiveData<Int> = _levelNumber
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
@@ -98,7 +98,7 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         // Loopen durch alle Wände
         var collision : Pair<Float, Float> = Pair(startPosition.x, startPosition.y)
 
-        when (levelNumberTest) {
+        when (levelNumber.value) {
             1 -> buildLevel (
                 wallsLevelOne,
                 holesLevelOne,
@@ -252,8 +252,8 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         if(checkGoalCollision(newX, newY, goalCenterX, goalCenterY)){
             sensorViewModel.gameState.value = GameState.WON
-            levelNumberTest++
-            println("$levelNumberTest Hello")
+            _levelNumber.value = _levelNumber.value!! + 1
+            // Wenn Win, dann Level erhöhen
         }
     }
 
