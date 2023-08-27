@@ -16,17 +16,18 @@ import androidx.compose.ui.unit.sp
 import com.example.marboles.LocalNavController
 import com.example.marboles.mvvm.viewModels.LevelStatus
 import com.example.marboles.mvvm.viewModels.LevelViewModel
+import com.example.marboles.mvvm.viewModels.SensorViewModel
 
 
 // Levelauswahl
 @Composable
-fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
+fun LevelChoiceScreen (levelViewModel: LevelViewModel, sensorViewModel : SensorViewModel) {
     val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
+    val currentLevel by sensorViewModel.levelNumber.observeAsState()
 
     levelViewModel.unlockLevel(1)
 
     val navController = LocalNavController.current
-
 
     Row(
         modifier = Modifier
@@ -67,7 +68,11 @@ fun LevelChoiceScreen (levelViewModel: LevelViewModel) {
                         levelStatusList.forEach { levelStatus ->
                             LevelButton(
                                 levelStatus = levelStatus,
-                                onLevelClicked = { navController?.navigate("game") }
+                                onLevelClicked = {
+                                    sensorViewModel.setLevelManually(levelStatus.levelNumber)
+                                    println("Level has been set manually to $currentLevel")
+                                    navController?.navigate("game")
+                                }
                             )
                         }
                     }

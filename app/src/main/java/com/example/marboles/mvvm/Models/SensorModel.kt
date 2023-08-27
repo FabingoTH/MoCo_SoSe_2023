@@ -257,6 +257,10 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         }
     }
 
+    fun setLevel(number : Int) {
+        _levelNumber.value = number
+    }
+
     // Brauchen wir in diesem Fall nicht
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 

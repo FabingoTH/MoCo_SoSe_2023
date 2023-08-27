@@ -87,7 +87,7 @@ fun NavigationManager(
                 )
             }
             composable("score") { ScoreView(scoreGameViewModel) }
-            composable("level") { LevelChoiceScreen(levelViewModel) }
+            composable("level") { LevelChoiceScreen(levelViewModel, sensorViewModel) }
             composable("game") {
                 val gameState by sensorViewModel.gameState.observeAsState(GameState.INGAME)
                 val playEffectKey = "playingEffect"
@@ -111,7 +111,7 @@ fun NavigationManager(
                             levelViewModel.unlockLevel(currentLevel.value!!)
                             navController.navigate("win")
 
-                            println(currentLevel.value)
+                            println("Now playing : ${currentLevel.value}")
                             // Ok ich hab keine Ahnung wieso aber irgendwie skippt der immer Lvl 4
                             // Und bei Lvl 2 ist Game Over und bei Retry next Level hää?
                         }

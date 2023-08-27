@@ -22,4 +22,8 @@ class SensorViewModel(context : Context) : ViewModel() {
     fun resetGameState() {
         sensorModel.resetBallCoordinates()
     }
+
+    fun setLevelManually(number : Int) {
+        sensorModel.setLevel(number)
+    }
 }
