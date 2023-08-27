@@ -22,7 +22,6 @@ val hole9 = Hole(30f, 0f, 120f)
 val hole10 = Hole(30f, 0f, -120f)
 
 
-
 val holesLevelOne = listOf(hole0, hole1, hole2)
 val holesLevelTwo = listOf(hole3, hole4)
 val holesLevelThree = listOf(hole5, hole6, hole7)

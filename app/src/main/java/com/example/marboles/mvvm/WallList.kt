@@ -21,9 +21,6 @@ val bordertop = Wall(-380f, 380f, -190f, -180f)
 
 
 var wallsLevelOne = listOf(wall0, wall1, wall2)
-//var wallsLevelTwo = listOf(wall0, wall1) // Nur zum Testen, Platzhalter
-
-// ich probiere hier nur mal ne andere Schreibweise aus, Collisions müssten dann noch funktionieren oder?
 
 var wallsLevelTwo = listOf(
     Wall(-380f, 300f, 5f, -5f), // OG Wand
