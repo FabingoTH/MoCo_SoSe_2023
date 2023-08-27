@@ -47,7 +47,7 @@ var wallsLevelFour = listOf(
     Wall(-200f, -190f, -40f, -180f),
     Wall(-200f, -190f, 180f, 40f),
     Wall(190f, 200f, -80f, -180f),
-    Wall(190f, 200f, 180f, 80f),
+    Wall(190f, 200f, 180f, 80f)
 )
 
 var wallsLevelFive = listOf(
@@ -56,7 +56,7 @@ var wallsLevelFive = listOf(
     Wall(-200f, -190f, -70f, -180f),
     Wall(-200f, -190f, 180f, 70f),
     Wall(190f, 200f, -80f, -180f),
-    Wall(190f, 200f, 180f, 80f),
+    Wall(190f, 200f, 180f, 80f)
 )
 
 var borderwalls = listOf(borderleft, borderright, bordertop, borderbottom)
