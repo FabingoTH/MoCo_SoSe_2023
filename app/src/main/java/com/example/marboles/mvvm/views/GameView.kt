@@ -41,13 +41,14 @@ fun BallScreen(
     gameViewModel: ScoreGameViewModel,
     onClickHome: () -> Unit,
     onClickScore: () -> Unit,
+    onClickGame: () -> Unit,
     levelNumber: Int
 ) {
 
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
 
     Box(modifier = Modifier.zIndex(100f)) {
-        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore)
+        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore, onClickGame)
     }
 
     // Playing Field = Screen Size
@@ -115,19 +116,6 @@ fun Ball(modifier: Modifier = Modifier, coordinates : Offset) {
     )
 }
 
-/*@Composable
-fun Goal(centerX: Float, centerY: Float) {
-    Image(
-        modifier = Modifier
-            .offset(x = centerX.dp, y = centerY.dp)
-            .size(60.dp)
-            .clip(CircleShape),
-        painter = painterResource(id = R.drawable.goal),
-        contentDescription = "Ziel",
-        contentScale = ContentScale.Fit
-    )
-}
-*/
 @Composable
 fun GoalView(levelNumber : Int) {
     when(levelNumber){
@@ -357,11 +345,14 @@ fun TopBar(
     gameViewModel: ScoreGameViewModel,
     sensorViewModel: SensorViewModel,
     onClickHome: () -> Unit,
-    onClickScore: () -> Unit
+    onClickScore: () -> Unit,
+    onClickGame: () -> Unit
 ) {
-
     // Timer-logic ist letzt im game view model
-    val isPaused by gameViewModel.isPaused.observeAsState(initial = false)
+
+    val gameState by sensorViewModel.gameState.observeAsState()
+    // val isPaused by gameViewModel.isPaused.observeAsState(initial = false)
+
     val time by gameViewModel.time.observeAsState(initial = 0)
 
     LaunchedEffect(Unit) { // Coroutine starten
@@ -377,7 +368,10 @@ fun TopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row() {
-            TextButton(onClick = { gameViewModel.changePausedState() }) {
+            TextButton(onClick = {
+                gameViewModel.changePausedState()
+                sensorViewModel.gameState.value = GameState.PAUSED
+            }) {
                 Text(text = "ll", fontSize = 20.sp)
             }
             TextButton(
@@ -397,20 +391,24 @@ fun TopBar(
         Text(text = "Timer: ${gameViewModel.formatTimer(time)}", fontSize = 20.sp)
     }
 
-    if (isPaused) {
+    if (gameState == GameState.PAUSED) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .offset(0.dp, 75.dp)
         ) {
-            PauseOverlay()
+            PauseOverlay(sensorViewModel, onClickHome, onClickGame)
         }
     }
 }
 
 
 @Composable
-fun PauseOverlay() {
+fun PauseOverlay(
+    sensorViewModel: SensorViewModel,
+    onClickHome: () -> Unit,
+    onClickGame: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -433,14 +431,16 @@ fun PauseOverlay() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp, 30.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp, 30.dp, 0.dp, 40.dp),
+                            .padding(0.dp, 30.dp, 0.dp, 10.dp)
+                        ,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        MenuTitle(label = "Pause")
+                        Text("PAUSE", fontSize = 40.sp, letterSpacing = 10.sp, color = Color.Black)
                     }
 
                     Row(
@@ -448,7 +448,9 @@ fun PauseOverlay() {
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Column() {
+                        Column(
+
+                        ) {
                             Row(
                                 Modifier.fillMaxWidth(0.4f),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -483,6 +485,29 @@ fun PauseOverlay() {
                                     onCheckedChange = { checkedState.value = it }
                                 )
                             }
+                        }
+                    }
+                    Row() {
+                        Button(
+                            modifier = Modifier
+                                .padding(10.dp),
+                            onClick = {
+                                sensorViewModel.gameState.value = GameState.PAUSED
+                                onClickHome()
+                            }
+                        ) {
+                            Text(text = "Home", fontSize = 20.sp)
+                        }
+
+                        Button(
+                            modifier = Modifier
+                                .padding(10.dp),
+                            onClick = {
+                                onClickGame()
+                            }
+                        ) {
+                            sensorViewModel.gameState.value = GameState.INGAME
+                            Text(text = "Game", fontSize = 20.sp)
                         }
                     }
                 }

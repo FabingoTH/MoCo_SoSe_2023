@@ -103,6 +103,10 @@ fun NavigationManager(
                             scoreGameViewModel,
                             { navController.navigate("home") },
                             { navController.navigate("score") },
+                            {
+                                sensorViewModel.gameState.value = GameState.INGAME
+                                navController.navigate("game")
+                            },
                             currentLevel // TODO: SEHR WICHTIG hier nur ein Platzhalter zum testen !!11!!1!
                         // TODO: Das aktuelle Level muss irgendwo noch global getrackt werden.
                         )
@@ -126,8 +130,14 @@ fun NavigationManager(
             composable("gameover") {
                 GameOverScreen(
                     scoreGameViewModel,
-                    { navController.navigate("home") },
-                    { navController.navigate("game") },
+                    {
+                        sensorViewModel.gameState.value = GameState.PAUSED
+                        navController.navigate("home")
+                    },
+                    {
+                        sensorViewModel.gameState.value = GameState.INGAME
+                        navController.navigate("game")
+                    },
                     sensorViewModel
                 )
             }

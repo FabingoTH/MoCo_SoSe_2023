@@ -73,7 +73,9 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
             xTilt = -orientationAngles[1]
             yTilt = -orientationAngles[2]
 
-            updateCoordinates()
+            if(sensorViewModel.gameState.value == GameState.INGAME){
+                updateCoordinates()
+            }
         }
     }
 
@@ -264,5 +266,3 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         sensorManager.unregisterListener(this)
     }
 }
-
-
