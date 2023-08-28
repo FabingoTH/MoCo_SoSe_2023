@@ -4,9 +4,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Highscore::class],
+    entities = [HighscoreEntry::class],
     exportSchema = false,
-    version = 1
+    version = 10
 )
 abstract class HighscoreDatabase : RoomDatabase(){
     abstract fun highscoreDao() : HighscoreDao

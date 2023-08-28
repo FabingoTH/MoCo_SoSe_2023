@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.marboles.database.Highscore
+import com.example.marboles.database.HighscoreEntry
 import com.example.marboles.database.HighscoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -70,34 +71,35 @@ class ScoreGameViewModel(context: Context) : ViewModel() {
 
     private val highscoreRepository = HighscoreRepository(context)
 
-    private val _highscores = MutableLiveData<List<Highscore>?>()
-    val highscores: LiveData<List<Highscore>?> = _highscores
+    private val _highscoresForLevel = MutableLiveData<List<HighscoreEntry>?>()
+    val highscoresForLevel: LiveData<List<HighscoreEntry>?> = _highscoresForLevel
 
     init {
-        loadHighscores()
+        loadHighscoresForLevel(1)
     }
 
-    private fun loadHighscores() {
+    fun loadHighscoresForLevel(levelId: Int) {
         viewModelScope.launch {
-            _highscores.value = withContext(Dispatchers.IO) {
-                highscoreRepository.getAllHighscores()
+            _highscoresForLevel.value = withContext(Dispatchers.IO) {
+                highscoreRepository.getHighscoresByLevel(levelId)
             }
         }
     }
 
-    @SuppressLint("SuspiciousIndentation")
-    fun addHighscore() {
-        val intScore : Int = _time.value ?: 0
-            viewModelScope.launch {
-            highscoreRepository.addHighscore(Highscore(date = currentDate, score = intScore))
-            loadHighscores() // Aktualisierung der Highscores nach dem Einfügen
+    fun addHighscoreForLevel(levelId: Int) {
+        val intScore: Int = _time.value ?: 0
+        viewModelScope.launch {
+            highscoreRepository.addHighscore(
+                HighscoreEntry(date = currentDate, score = intScore, levelId = levelId)
+            )
+            loadHighscoresForLevel(levelId) // Update highscores after insertion
         }
     }
 
-    fun deleteAllHighscores() {
+    fun deleteAllHighscores(levelId: Int) {
         viewModelScope.launch {
             highscoreRepository.deleteAllHighscores()
-            loadHighscores()
+            loadHighscoresForLevel(levelId)
         }
     }
 

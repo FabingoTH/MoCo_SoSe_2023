@@ -14,28 +14,26 @@ class HighscoreRepository(context: Context) {
 
     private val db = Room.databaseBuilder(
         context,
-        HighscoreDatabase::class.java, "highscore"
+        HighscoreDatabase::class.java, "highscores"
     ).build()
 
     private val highscoreDao = db.highscoreDao()
-
-    suspend fun getAllHighscores(): List<Highscore>? {
-        return withContext(Dispatchers.IO) {
-            // irgendwie wurden die Highscores immer doppelt angezeigt.
-            // "distinct" löst zwar nicht das eigentliche Problem (welches wir nicht kennen - werden die zweimal abgespeichert?
-            // why tho??) aber wenigstens ist das Problem nicht mehr sichtbar ;)
-            highscoreDao.getHighscoresByHighest()!!.distinct()
-        }
-    }
-
-    suspend fun addHighscore(highscore: Highscore) {
-            highscoreDao.insertHighscore(highscore)
-    }
 
     suspend fun deleteAllHighscores() {
         withContext(Dispatchers.IO) {
             highscoreDao.deleteAllHighscores()
         }
+    }
+
+    suspend fun getHighscoresByLevel(levelId: Int): List<HighscoreEntry>? {
+        return withContext(Dispatchers.IO) {
+            val rawHighscores = highscoreDao.getHighscoresByLevelAndHighest(levelId)
+            rawHighscores?.distinctBy { it.date to it.score }
+        }
+    }
+
+    suspend fun addHighscore(highscore: HighscoreEntry) {
+        highscoreDao.insertHighscore(highscore)
     }
 
 }

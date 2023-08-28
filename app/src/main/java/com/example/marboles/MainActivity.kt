@@ -86,7 +86,10 @@ fun NavigationManager(
                     sensorViewModel
                 )
             }
-            composable("score") { ScoreView(scoreGameViewModel) }
+            composable("score") {
+                val currentLevel = sensorViewModel.levelNumber.observeAsState()
+                ScoreView(scoreGameViewModel, currentLevel.value ?: 1)
+            }
             composable("level") { LevelChoiceScreen(levelViewModel, sensorViewModel) }
             composable("game") {
                 val gameState by sensorViewModel.gameState.observeAsState(GameState.INGAME)
@@ -94,7 +97,7 @@ fun NavigationManager(
                 val winEffectKey = "winEffect"
                 val gameoverEffectKey = "gameoverEffect"
 
-                if(gameState == GameState.WON) scoreGameViewModel.addHighscore()
+                if(gameState == GameState.WON) scoreGameViewModel.addHighscoreForLevel(currentLevel.value!!)
 
                 when(gameState!!) {
                     GameState.INGAME -> {

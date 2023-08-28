@@ -16,16 +16,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.marboles.database.Highscore
+import com.example.marboles.database.HighscoreEntry
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 
 import kotlinx.coroutines.launch
 
 @Composable
-fun ScoreView(scoreViewModel: ScoreGameViewModel) {
+fun ScoreView(scoreViewModel: ScoreGameViewModel, levelId: Int) {
 
     val coroutineScope = rememberCoroutineScope()
 
-    val highscoreList: List<Highscore>? by scoreViewModel.highscores.observeAsState()
+    //val highscoreList: List<Highscore>? by scoreViewModel.highscores.observeAsState()
+    val highscoreListForLevel: List<HighscoreEntry>? by scoreViewModel.highscoresForLevel.observeAsState()
 
     Button(
         modifier = Modifier
@@ -33,7 +35,7 @@ fun ScoreView(scoreViewModel: ScoreGameViewModel) {
             .zIndex(1f),
         onClick = {
             coroutineScope.launch {
-                scoreViewModel.deleteAllHighscores() // button nur für testing - oder wollen wir diese funktionalität beibehalten?
+                scoreViewModel.deleteAllHighscores(1) // button nur für testing - oder wollen wir diese funktionalität beibehalten?
             }
         }
     ) {
@@ -76,13 +78,20 @@ fun ScoreView(scoreViewModel: ScoreGameViewModel) {
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        if (highscoreList == null) {
-                            Text("no highscores yet")
+                        if (highscoreListForLevel == null) {
+                            Text("No highscores for this level yet")
                         } else {
-                            for (element in highscoreList!!) { // in der Highscoreliste ist jetzt auch die Zeit im Timer-Format
+                            for (element in highscoreListForLevel!!) {
                                 ScoreEntry(datum = element.date, score = scoreViewModel.formatTimer(element.score))
                             }
                         }
+                    }
+                    Button(
+                        onClick = {
+                            scoreViewModel.addHighscoreForLevel(levelId)
+                        }
+                    ) {
+                        Text(text = "Add Highscore")
                     }
                 }
             }
