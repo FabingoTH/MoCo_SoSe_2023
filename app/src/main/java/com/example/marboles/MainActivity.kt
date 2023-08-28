@@ -97,8 +97,6 @@ fun NavigationManager(
                 val winEffectKey = "winEffect"
                 val gameoverEffectKey = "gameoverEffect"
 
-                if(gameState == GameState.WON) scoreGameViewModel.addHighscoreForLevel(currentLevel.value!!)
-
                 when(gameState!!) {
                     GameState.INGAME -> {
                         BallScreen(
@@ -110,7 +108,12 @@ fun NavigationManager(
                         )
                     }
                     GameState.WON -> {
+                        // FIX: weil der SensorManager das Level schon direkt auf das nächste Level setzt,
+                        // muss beim Datenbankeintrag mit -1 gerechnet werden. Muss eventuell angepasst werden.
+                        scoreGameViewModel.addHighscoreForLevel(currentLevel.value!! - 1)
+
                         LaunchedEffect(key1 = winEffectKey) {
+
                             levelViewModel.unlockLevel(currentLevel.value!!)
                             navController.navigate("win")
 

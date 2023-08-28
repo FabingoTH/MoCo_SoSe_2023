@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.marboles.database.Highscore
 import com.example.marboles.database.HighscoreEntry
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 

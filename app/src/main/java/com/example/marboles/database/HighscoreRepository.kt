@@ -34,6 +34,7 @@ class HighscoreRepository(context: Context) {
 
     suspend fun addHighscore(highscore: HighscoreEntry) {
         highscoreDao.insertHighscore(highscore)
+        println("Highscore added:" + highscore)
     }
 
 }
