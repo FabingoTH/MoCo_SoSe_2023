@@ -205,20 +205,11 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         if (horizontalX.contains(newX) && verticalY.contains(newY)) {
 
-            // LINKS
-            if (oldX <= goalLeftX && horizontalX.contains(newX)) {
+            if (horizontalX.contains(newX)) {
                 collisionDetected = true
             }
-            // RECHTS
-            if (oldX >= goalRightX && horizontalX.contains(newX)) {
-                collisionDetected = true
-            }
-            // OBEN
-            if (oldY >= goalTopY && verticalY.contains(newY)) {
-                collisionDetected = true
-            }
-            // UNTEN
-            if (oldY <= goalBottomY && verticalY.contains(newY)) {
+
+            if (verticalY.contains(newY)) {
                 collisionDetected = true
             }
         }
