@@ -163,7 +163,7 @@ fun LevelScreen(
                             ) {
                                 Text(
                                     text = "<",
-                                    fontSize = 50.sp,
+                                    fontSize = 20.sp,
                                     color = Color.Black
                                 )
                             }
@@ -183,7 +183,7 @@ fun LevelScreen(
                         ) {
                             Text(
                                 text = ">",
-                                fontSize = 50.sp,
+                                fontSize = 20.sp,
                                 color = nextColour
                             )
                         }
