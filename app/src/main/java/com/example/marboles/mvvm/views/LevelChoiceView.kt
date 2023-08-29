@@ -122,7 +122,7 @@ fun LevelScreen(
     val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
     val currentLevel by sensorViewModel.levelNumber.observeAsState()
 
-    val nextColour = if(levelStatusList[currentLevel!! + 1].isUnlocked) Color.Black else Color.LightGray
+    val nextColour = if((levelStatusList[currentLevel!!].isUnlocked) && currentLevel!! < 5) Color.Black else Color.LightGray
 
     Row(
         modifier = Modifier
@@ -151,24 +151,26 @@ fun LevelScreen(
                         MenuTitle(label = "Level $currentLevel")
                     }
 
-                    if((levelNumber - 1) > 0){ // If Lvl1 dont even render previous
-                        Row(horizontalArrangement = Arrangement.End) {
-                            TextButton(
-                                onClick = {
-                                    sensorViewModel.setLevelManually(levelNumber - 1)
-                                    println("Level has been set manually to $currentLevel")
-                                    onClickLevelScreen()
-                                },
-                                modifier = Modifier,
-                            ) {
-                                Text(
-                                    text = "<",
-                                    fontSize = 20.sp,
-                                    color = Color.Black
-                                )
-                            }
+
+                    Row(horizontalArrangement = Arrangement.End) {
+                        TextButton(
+                            onClick = {
+                                sensorViewModel.setLevelManually(levelNumber - 1)
+                                println("Level has been set manually to $currentLevel")
+                                onClickLevelScreen()
+                            },
+                            modifier = Modifier,
+                            enabled = (levelNumber - 1) > 0
+                        ) {
+                            Text(
+                                text = "<",
+                                fontSize = 20.sp,
+                                color = if((levelNumber - 1) > 0) Color.Black else Color.LightGray
+                            )
                         }
                     }
+
+                    val nextLevelUnlocked = levelStatusList[currentLevel!!].isUnlocked
 
                     // Back Button
                     Row(horizontalArrangement = Arrangement.Start) {
@@ -179,7 +181,7 @@ fun LevelScreen(
                                 onClickLevelScreen()
                             },
                             modifier = Modifier,
-                            enabled = levelStatusList[currentLevel!! + 1].isUnlocked
+                            enabled = (nextLevelUnlocked && (current < 5))
                         ) {
                             Text(
                                 text = ">",
