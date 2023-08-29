@@ -156,7 +156,8 @@ fun NavigationManager(
                     currentLevel.value!!,
                     { navController.navigate("game") },
                     { navController.navigate("score") },
-                    { navController.navigate("home") }
+                    { navController.navigate("home") },
+                    { navController.navigate("levelscreen")}
                 )
             }
         }

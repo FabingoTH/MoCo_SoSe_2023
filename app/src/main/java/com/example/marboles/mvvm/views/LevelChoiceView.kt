@@ -116,10 +116,13 @@ fun LevelScreen(
     levelNumber : Int,
     onClickGame : () -> Unit,
     onClickHighscore : () -> Unit,
-    onClickHome : () -> Unit
+    onClickHome : () -> Unit,
+    onClickLevelScreen : () -> Unit
 ){
     val levelStatusList by levelViewModel.levelStatusList.observeAsState(emptyList())
     val currentLevel by sensorViewModel.levelNumber.observeAsState()
+
+    val nextColour = if(levelStatusList[currentLevel!! + 1].isUnlocked) Color.Black else Color.LightGray
 
     Row(
         modifier = Modifier
@@ -146,6 +149,44 @@ fun LevelScreen(
                 ) {
                     Row(horizontalArrangement = Arrangement.Center) {
                         MenuTitle(label = "Level $currentLevel")
+                    }
+
+                    if((levelNumber - 1) > 0){ // If Lvl1 dont even render previous
+                        Row(horizontalArrangement = Arrangement.End) {
+                            TextButton(
+                                onClick = {
+                                    sensorViewModel.setLevelManually(levelNumber - 1)
+                                    println("Level has been set manually to $currentLevel")
+                                    onClickLevelScreen()
+                                },
+                                modifier = Modifier,
+                            ) {
+                                Text(
+                                    text = "<",
+                                    fontSize = 50.sp,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
+
+                    // Back Button
+                    Row(horizontalArrangement = Arrangement.Start) {
+                        TextButton(
+                            onClick = {
+                                sensorViewModel.setLevelManually(levelNumber + 1)
+                                println("Level has been set manually to $currentLevel")
+                                onClickLevelScreen()
+                            },
+                            modifier = Modifier,
+                            enabled = levelStatusList[currentLevel!! + 1].isUnlocked
+                        ) {
+                            Text(
+                                text = ">",
+                                fontSize = 50.sp,
+                                color = nextColour
+                            )
+                        }
                     }
 
                     // Buttons
