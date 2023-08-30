@@ -102,7 +102,7 @@ fun NavigationManager(
                 val gameoverEffectKey = "gameoverEffect"
 
                 when(gameState) {
-                    GameState.INGAME -> {
+                    GameState.INGAME, GameState.PAUSED -> {
                         BallScreen(
                             sensorViewModel,
                             scoreGameViewModel,
@@ -127,7 +127,6 @@ fun NavigationManager(
                             navController.navigate("gameover")
                         }
                     }
-                    GameState.PAUSED -> {}
                 }
             }
             composable("gameover") {

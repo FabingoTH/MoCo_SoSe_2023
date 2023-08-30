@@ -363,7 +363,12 @@ fun TopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row() {
-            TextButton(onClick = { gameViewModel.changePausedState() }) {
+            TextButton(onClick = {
+                gameViewModel.changePausedState()
+                if(sensorViewModel.gameState.value != GameState.PAUSED){
+                    sensorViewModel.changeGameState("paused")
+                } else sensorViewModel.changeGameState("ingame")
+            }) {
                 Text(text = "ll", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             }
         }

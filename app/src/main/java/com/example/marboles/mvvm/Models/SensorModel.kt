@@ -65,7 +65,9 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
             xTilt = -orientationAngles[1]
             yTilt = -orientationAngles[2]
 
-            updateCoordinates()
+            if(gameState.value == GameState.INGAME){
+                updateCoordinates()
+            }
         }
     }
 
