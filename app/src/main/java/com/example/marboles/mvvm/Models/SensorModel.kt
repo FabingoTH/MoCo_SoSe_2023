@@ -241,8 +241,10 @@ class SensorModel (private val sensorManager : SensorManager) : SensorEventListe
         }
 
         if(checkGoalCollision(newX, newY, goalCenterX, goalCenterY)){
-            _gameState.value = GameState.WON
-            _levelNumber.value = _levelNumber.value!! + 1 // Wenn Win, dann Level erhöhen
+            if(_gameState.value != GameState.WON){
+                _gameState.value = GameState.WON
+                _levelNumber.value = _levelNumber.value!! + 1 // Wenn Win, dann Level erhöhen
+            }
         }
     }
 

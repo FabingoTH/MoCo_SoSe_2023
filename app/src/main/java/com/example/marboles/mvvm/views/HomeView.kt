@@ -11,10 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.marboles.GameState
+import com.example.marboles.R
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
 
@@ -53,7 +56,11 @@ fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewMode
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
 
                 {
-                    Text(text = "Play", color = Color.Black, fontSize = 30.sp)
+                    Text(
+                        text = "Play",
+                        color = Color.Black,
+                        fontSize = 30.sp,
+                        fontFamily = FontFamily(Font(R.font.kyokasho_np_b)))
                 }
 
                 Button(
@@ -65,7 +72,12 @@ fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewMode
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent))
 
                 {
-                    Text(text = "Level", color = Color.Black, fontSize = 30.sp)
+                    Text(
+                        text = "Level",
+                        color = Color.Black,
+                        fontSize = 30.sp,
+                        fontFamily = FontFamily(Font(R.font.kyokasho_np_b))
+                    )
                 }
             }
         }
@@ -85,7 +97,8 @@ fun TitleText(title : String) {
                 color = Color.Black,
                 fontSize = 50.sp,
                 textAlign = TextAlign.Center,
-                letterSpacing = 20.sp
+                letterSpacing = 20.sp,
+                fontFamily = FontFamily(Font(R.font.kyokasho_np_b))
             )
         )
     }
