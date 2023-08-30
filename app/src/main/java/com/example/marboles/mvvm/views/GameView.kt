@@ -381,14 +381,18 @@ fun TopBar(
                 .fillMaxSize()
                 .offset(0.dp, 75.dp)
         ) {
-            PauseOverlay(sensorViewModel, onClickHome)
+            PauseOverlay(sensorViewModel, gameViewModel, onClickHome)
         }
     }
 }
 
 
 @Composable
-fun PauseOverlay(sensorViewModel : SensorViewModel, onClickHome: () -> Unit) {
+fun PauseOverlay(
+    sensorViewModel : SensorViewModel,
+    scoreGameViewModel : ScoreGameViewModel,
+    onClickHome: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -469,6 +473,8 @@ fun PauseOverlay(sensorViewModel : SensorViewModel, onClickHome: () -> Unit) {
                                 .padding(10.dp),
                             onClick = {
                                 sensorViewModel.changeGameState("paused")
+                                sensorViewModel.resetGameState()
+                                scoreGameViewModel.resetTimer()
                                 onClickHome()
                             }
                         ) {
