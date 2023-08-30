@@ -13,7 +13,7 @@ class LevelViewModel(context: Context) : ViewModel() {
     val levelStatusList: LiveData<List<LevelStatus>> get() = _levelStatusList
 
     init {
-        val initialStatusList = List(6) { LevelStatus(it + 1, false) }
+        val initialStatusList = List(7) { LevelStatus(it + 1, false) }
         _levelStatusList.value = initialStatusList
     }
 

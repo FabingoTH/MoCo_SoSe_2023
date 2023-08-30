@@ -146,7 +146,9 @@ fun LevelScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(horizontalArrangement = Arrangement.Center) {
-                        MenuTitle(label = "Level $currentLevel")
+                        if(currentLevel!! > 5){
+                            MenuTitle(label = "Level TBD")
+                        } else MenuTitle(label = "Level $currentLevel")
                     }
 
 
