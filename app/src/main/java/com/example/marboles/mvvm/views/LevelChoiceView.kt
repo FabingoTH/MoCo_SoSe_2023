@@ -181,7 +181,7 @@ fun LevelScreen(
                                 onClickLevelScreen()
                             },
                             modifier = Modifier,
-                            enabled = (nextLevelUnlocked && (current < 5))
+                            enabled = (nextLevelUnlocked && (levelNumber < 5))
                         ) {
                             Text(
                                 text = ">",
