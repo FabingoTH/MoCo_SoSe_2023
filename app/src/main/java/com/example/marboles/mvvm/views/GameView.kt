@@ -91,7 +91,6 @@ fun BallScreen(
                 WallView(levelNumber)
             }
 
-            // else -> throw Exception("Level kann nicht gebaut werden... Weil es dieses noch nicht gibt")
             else -> ToBeContinued()
         }
         Ball(Modifier, ballCoordinates)
@@ -180,8 +179,7 @@ fun GoalView(levelNumber : Int) {
             )
         }
 
-        // else -> throw Exception("Ziel fehlgeschlagen. Dieses Level existiert noch nicht ;)")
-        else -> { /* Do Nothing */ }
+        else -> { /* Nichts Tun (To Be Continued) */ }
     }
 }
 
@@ -259,8 +257,7 @@ fun HoleView(levelNumber : Int) {
             }
         }
 
-        // else -> throw Exception("Löcher fehlgeschlagen. Dieses Level existiert noch nicht.")
-        else -> { /* Do Nothing */ }
+        else -> { /* Nichts Tun (To Be Continued) */ }
     }
 
 }
@@ -320,8 +317,7 @@ fun WallView(levelNumber : Int) {
                 }
             }
 
-            // else -> throw Exception("Wände fehlgeschlagen. Dieses Level existiert noch nicht.")
-            else -> { /* Do Nothing */ }
+            else -> { /* Nichts Tun (To Be Continued) */ }
         }
 
     }
@@ -351,7 +347,6 @@ fun TopBar(
     onClickHome: () -> Unit
 ) {
 
-    // Timer-logic ist letzt im game view model
     val isPaused by gameViewModel.isPaused.observeAsState(initial = false)
     val time by gameViewModel.time.observeAsState(initial = 0)
 
@@ -468,7 +463,7 @@ fun PauseOverlay(sensorViewModel : SensorViewModel, onClickHome: () -> Unit) {
                             modifier = Modifier
                                 .padding(10.dp),
                             onClick = {
-                                sensorViewModel.gameState.value = GameState.PAUSED
+                                sensorViewModel.changeGameState("paused")
                                 onClickHome()
                             }
                         ) {
@@ -533,10 +528,9 @@ fun WinScreen(gameViewModel: ScoreGameViewModel, sensorViewModel: SensorViewMode
                                     .height(80.dp)
                                     .padding(10.dp),
                                 onClick = {
-                                    sensorViewModel.gameState.value = GameState.PAUSED
+                                    sensorViewModel.changeGameState("paused")
                                     gameViewModel.resetTimer()
                                     sensorViewModel.resetGameState()
-                                    // TODO: resetTimer und resetGamestate vereinen
                                     onClickHome()
                                 }
                             ) {
@@ -547,11 +541,10 @@ fun WinScreen(gameViewModel: ScoreGameViewModel, sensorViewModel: SensorViewMode
                                 .height(80.dp)
                                 .padding(10.dp),
                                 onClick = {
-                                    sensorViewModel.gameState.value = GameState.INGAME
+                                    sensorViewModel.changeGameState("ingame")
                                     gameViewModel.resetTimer()
                                     sensorViewModel.resetGameState()
-                                    // TODO: resetTimer und resetGamestate vereinen
-                                    onClickGame() // TODO : Next Level
+                                    onClickGame()
                                 }
                             ) {
                                 Text(
@@ -569,8 +562,6 @@ fun WinScreen(gameViewModel: ScoreGameViewModel, sensorViewModel: SensorViewMode
     }
 }
 
-
-// für den game over screen muss die zeit noch pausiert werden im vm (isPaused ändern)
 @Composable
 fun GameOverScreen(gameViewModel: ScoreGameViewModel, onClickHome: () -> Unit, onClickGame: () -> Unit, sensorViewModel: SensorViewModel) {
 
@@ -631,8 +622,7 @@ fun GameOverScreen(gameViewModel: ScoreGameViewModel, onClickHome: () -> Unit, o
                                 .height(80.dp)
                                 .padding(10.dp),
                                 onClick = {
-                                    sensorViewModel.gameState.value = GameState.INGAME
-                                    // TODO : resetGameState() und resetTimer vereinen
+                                    sensorViewModel.changeGameState("ingame")
                                     sensorViewModel.resetGameState()
                                     gameViewModel.resetTimer()
                                     onClickGame()

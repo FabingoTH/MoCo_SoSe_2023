@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        // ViewModels initialisieren, um sie in die Views übergeben zu können
+        // ViewModels initialisieren, um sie mit dem Views zu verwenden
         val sensorViewModel = SensorViewModel(this)
         val levelViewModel = LevelViewModel(this)
         val scoreGameViewModel = ScoreGameViewModel(this)
@@ -101,7 +101,7 @@ fun NavigationManager(
                 val winEffectKey = "winEffect"
                 val gameoverEffectKey = "gameoverEffect"
 
-                when(gameState!!) {
+                when(gameState) {
                     GameState.INGAME -> {
                         BallScreen(
                             sensorViewModel,
@@ -120,10 +120,6 @@ fun NavigationManager(
 
                             levelViewModel.unlockLevel(currentLevel.value!!)
                             navController.navigate("win")
-
-                            println("Now playing : ${currentLevel.value}")
-                            // Ok ich hab keine Ahnung wieso aber irgendwie skippt der immer Lvl 4
-                            // Und bei Lvl 2 ist Game Over und bei Retry next Level hää?
                         }
                     }
                     GameState.GAMEOVER -> {
@@ -154,6 +150,7 @@ fun NavigationManager(
                 LevelScreen(
                     levelViewModel,
                     sensorViewModel,
+                    scoreGameViewModel,
                     currentLevel.value!!,
                     { navController.navigate("game") },
                     { navController.navigate("score") },
@@ -185,7 +182,6 @@ fun LockScreenOrientation(orientation: Int) {
     }
 }
 
-// Wozu brauchen wir das?
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()

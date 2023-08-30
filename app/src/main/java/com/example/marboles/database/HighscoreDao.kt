@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HighscoreDao {
-    // Suspend damit DB Operationen fertig laufen können bevor die App weiterläuft
     @Insert
     suspend fun insertHighscore(highscore : HighscoreEntry)
 

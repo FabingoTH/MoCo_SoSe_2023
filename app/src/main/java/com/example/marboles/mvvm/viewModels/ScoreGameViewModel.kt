@@ -52,7 +52,7 @@ class ScoreGameViewModel(context: Context) : ViewModel() {
     // Current Date
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH) + 1 // Beachten Sie, dass die Monate von 0 bis 11 nummeriert sind, daher +1
+    val month = calendar.get(Calendar.MONTH) + 1 // Monate sind von 0 bis 11 nummeriert, deswegen +1
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     val currentDate = "$day.$month.$year"

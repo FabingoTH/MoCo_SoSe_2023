@@ -42,8 +42,8 @@ fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewMode
             ) {
                 Button(
                     onClick = {
-                        sensorViewModel.gameState.value = GameState.INGAME
-                        // Quick Fix für Pause State Problem, später nochmal überarbeiten
+                        sensorViewModel.changeGameState("ingame")
+                        // Quick Fix für Pause State Problem
                         if(gameViewModel.isPaused.value == true){
                             gameViewModel.changePausedState()
                         }
@@ -58,7 +58,7 @@ fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewMode
 
                 Button(
                     onClick = {
-                        sensorViewModel.gameState.value = GameState.PAUSED
+                        sensorViewModel.changeGameState("paused")
                         onClickLevel()
                     },
                     elevation = ButtonDefaults.elevation(0.dp),

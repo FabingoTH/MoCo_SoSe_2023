@@ -19,6 +19,7 @@ import com.example.marboles.GameState
 import com.example.marboles.LocalNavController
 import com.example.marboles.mvvm.viewModels.LevelStatus
 import com.example.marboles.mvvm.viewModels.LevelViewModel
+import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
 
 
@@ -33,8 +34,6 @@ fun LevelChoiceScreen (
     val currentLevel by sensorViewModel.levelNumber.observeAsState()
 
     levelViewModel.unlockLevel(1)
-
-    val navController = LocalNavController.current
 
     Row(
         modifier = Modifier
@@ -77,8 +76,6 @@ fun LevelChoiceScreen (
                                 levelStatus = levelStatus,
                                 onLevelClicked = {
                                     sensorViewModel.setLevelManually(levelStatus.levelNumber)
-                                    println("Level has been set manually to $currentLevel")
-                                    // navController?.navigate("game")
                                     onClickLevelScreen()
                                 }
                             )
@@ -113,6 +110,7 @@ fun LevelButton(
 fun LevelScreen(
     levelViewModel: LevelViewModel,
     sensorViewModel : SensorViewModel,
+    scoreGameViewModel: ScoreGameViewModel,
     levelNumber : Int,
     onClickGame : () -> Unit,
     onClickHighscore : () -> Unit,
@@ -156,7 +154,6 @@ fun LevelScreen(
                         TextButton(
                             onClick = {
                                 sensorViewModel.setLevelManually(levelNumber - 1)
-                                println("Level has been set manually to $currentLevel")
                                 onClickLevelScreen()
                             },
                             modifier = Modifier,
@@ -177,7 +174,6 @@ fun LevelScreen(
                         TextButton(
                             onClick = {
                                 sensorViewModel.setLevelManually(levelNumber + 1)
-                                println("Level has been set manually to $currentLevel")
                                 onClickLevelScreen()
                             },
                             modifier = Modifier,
@@ -205,7 +201,11 @@ fun LevelScreen(
                                 .height(80.dp)
                                 .padding(10.dp),
                             onClick = {
-                                sensorViewModel.gameState.value = GameState.INGAME
+                                sensorViewModel.changeGameState("ingame")
+                                // Quick Fix für Pause State Problem
+                                if(scoreGameViewModel.isPaused.value == true){
+                                    scoreGameViewModel.changePausedState()
+                                }
                                 onClickGame()
                             }
                         ) {

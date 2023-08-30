@@ -14,17 +14,10 @@ import com.example.marboles.mvvm.*
 import com.example.marboles.mvvm.viewModels.SensorViewModel
 
 // MODEL
-class SensorModel (private val sensorManager : SensorManager, private val sensorViewModel: SensorViewModel) : SensorEventListener {
-
-    // kleine Notiz: in einer mvvm-Architektur ist im Model eig keine Referenz auf das VM (siehe Argumentliste) - hier ist das ja nur für das enum/die States
-    // da, also nicht so tragisch, aber maybe können wir das nach nem zukünftigen merge einfach auf Model-Ebene packen um dann vom
-    // VM darauf zuzugreifen. Damit wir uns nicht selber ins bein schießen damit, und gesagt wird, wir haben "mvvm nicht richtig implementiert" (:
+class SensorModel (private val sensorManager : SensorManager) : SensorEventListener {
 
     private val accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
-
-    private val screenWidth = Resources.getSystem().displayMetrics.widthPixels // xMax
-    private val screenHeight = Resources.getSystem().displayMetrics.heightPixels // yMax
 
     var ballRadius = 25f
 
@@ -34,10 +27,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
     var newX = 10f
     var newY = 150f
 
-    // Setze Startposition
-    //private val startPosition = Offset(10f, 150f)
-
-    //Ersatz-Startposition, falls es mit dem Sensor was kaputt machen sollte
     private val startPosition = Offset(-320f, 150f)
     var coordinates = startPosition
 
@@ -55,6 +44,9 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
     private val _levelNumber = MutableLiveData<Int>(1)
     val levelNumber : LiveData<Int> = _levelNumber
+
+    private val _gameState = MutableLiveData<GameState>(GameState.INGAME)
+    val gameState : LiveData<GameState> = _gameState
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
@@ -86,9 +78,6 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         newX = oldX + xTilt * ballSpeed
         newY = oldY + yTilt * ballSpeed
 
-        // Checks, ob der Ball noch im Feld ist
-        // Magische Nummern, Bound Check funktioniert bei mir nur mit diesen Werten
-        // TODO: Statt Magic Numbers Screen Size berechnen
         if (newX < -345f) { newX = -345f }
         if (newX > 345f) { newX = 345f }
 
@@ -220,6 +209,16 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
         _accelerometerData.value = coordinates
     }
 
+    fun changeGameState(state : String){
+        when(state){
+            "gameover" -> _gameState.value = GameState.GAMEOVER
+            "won" -> _gameState.value = GameState.WON
+            "ingame" -> _gameState.value = GameState.INGAME
+            "paused" -> _gameState.value = GameState.PAUSED
+            else -> throw Exception("Ungültiger Gamestate beim Aufruf von changeGameState")
+        }
+    }
+
     private fun buildLevel(wallList : List<Wall>, holeList : List<Hole>,
                            goalCenterX : Float, goalCenterY : Float,
                            collision : Pair<Float, Float>,
@@ -237,14 +236,13 @@ class SensorModel (private val sensorManager : SensorManager, private val sensor
 
         for(hole in holeList) {
             if(checkGoalCollision(newX, newY, hole.centerX, hole.centerY)) {
-                sensorViewModel.gameState.value = GameState.GAMEOVER
+                _gameState.value = GameState.GAMEOVER
             }
         }
 
         if(checkGoalCollision(newX, newY, goalCenterX, goalCenterY)){
-            sensorViewModel.gameState.value = GameState.WON
-            _levelNumber.value = _levelNumber.value!! + 1
-            // Wenn Win, dann Level erhöhen
+            _gameState.value = GameState.WON
+            _levelNumber.value = _levelNumber.value!! + 1 // Wenn Win, dann Level erhöhen
         }
     }
 
