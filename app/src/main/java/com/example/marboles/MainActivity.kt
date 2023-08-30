@@ -83,7 +83,8 @@ fun NavigationManager(
                 HomeScreen(
                     { navController.navigate("game") },
                     { navController.navigate("level") },
-                    sensorViewModel
+                    sensorViewModel,
+                    scoreGameViewModel
                 )
             }
             composable("score") {

@@ -15,10 +15,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.marboles.GameState
+import com.example.marboles.mvvm.viewModels.ScoreGameViewModel
 import com.example.marboles.mvvm.viewModels.SensorViewModel
 
 @Composable
-fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewModel : SensorViewModel) {
+fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewModel : SensorViewModel, gameViewModel : ScoreGameViewModel) {
     Row(
         modifier = Modifier
             .fillMaxSize(),
@@ -42,6 +43,10 @@ fun HomeScreen(onClickPlay: () -> Unit, onClickLevel: () -> Unit, sensorViewMode
                 Button(
                     onClick = {
                         sensorViewModel.gameState.value = GameState.INGAME
+                        // Quick Fix für Pause State Problem, später nochmal überarbeiten
+                        if(gameViewModel.isPaused.value == true){
+                            gameViewModel.changePausedState()
+                        }
                         onClickPlay()
                     },
                     elevation = ButtonDefaults.elevation(0.dp),

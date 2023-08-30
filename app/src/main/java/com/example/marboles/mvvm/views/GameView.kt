@@ -48,7 +48,7 @@ fun BallScreen(
     val ballCoordinates by sensorViewModel.ballCoordinates.observeAsState(Offset.Zero)
 
     Box(modifier = Modifier.zIndex(100f)) {
-        TopBar(gameViewModel, sensorViewModel, onClickHome, onClickScore)
+        TopBar(gameViewModel, sensorViewModel, onClickHome)
     }
 
     // Playing Field = Screen Size
@@ -348,8 +348,7 @@ fun Gameborders() {
 fun TopBar(
     gameViewModel: ScoreGameViewModel,
     sensorViewModel: SensorViewModel,
-    onClickHome: () -> Unit,
-    onClickScore: () -> Unit
+    onClickHome: () -> Unit
 ) {
 
     // Timer-logic ist letzt im game view model
@@ -364,26 +363,13 @@ fun TopBar(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.Transparent)
-            .padding(50.dp, 15.dp),
+            .padding(30.dp, 15.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row() {
             TextButton(onClick = { gameViewModel.changePausedState() }) {
-                Text(text = "ll", fontSize = 20.sp)
-            }
-            TextButton(
-                onClick = {
-                    sensorViewModel.gameState.value = GameState.PAUSED
-                    onClickHome()
-                }
-            ) {
-                Text(text = "Home", fontSize = 20.sp)
-            }
-            TextButton( // Ich denke mal der Button kommt bald wieder weg, deswegen kein State
-                onClick = onClickScore
-            ) {
-                Text(text = "Highscore", fontSize = 20.sp)
+                Text(text = "ll", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             }
         }
         Text(text = "Timer: ${gameViewModel.formatTimer(time)}", fontSize = 20.sp)
@@ -395,14 +381,14 @@ fun TopBar(
                 .fillMaxSize()
                 .offset(0.dp, 75.dp)
         ) {
-            PauseOverlay()
+            PauseOverlay(sensorViewModel, onClickHome)
         }
     }
 }
 
 
 @Composable
-fun PauseOverlay() {
+fun PauseOverlay(sensorViewModel : SensorViewModel, onClickHome: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -425,14 +411,15 @@ fun PauseOverlay() {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp, 30.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp, 30.dp, 0.dp, 40.dp),
+                            .padding(0.dp, 30.dp, 0.dp, 10.dp),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        MenuTitle(label = "Pause")
+                        Text("PAUSE", fontSize = 40.sp, letterSpacing = 10.sp, color = Color.Black)
                     }
 
                     Row(
@@ -445,7 +432,6 @@ fun PauseOverlay() {
                                 Modifier.fillMaxWidth(0.4f),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
-
                             ) {
                                 Text(
                                     modifier = Modifier
@@ -475,6 +461,18 @@ fun PauseOverlay() {
                                     onCheckedChange = { checkedState.value = it }
                                 )
                             }
+                        }
+                    }
+                    Row(){
+                        Button(
+                            modifier = Modifier
+                                .padding(10.dp),
+                            onClick = {
+                                sensorViewModel.gameState.value = GameState.PAUSED
+                                onClickHome()
+                            }
+                        ) {
+                            Text(text = "Home", fontSize = 20.sp)
                         }
                     }
                 }
