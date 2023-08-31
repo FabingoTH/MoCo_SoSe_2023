@@ -15,8 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marboles.GameState
-import com.example.marboles.LocalNavController
 import com.example.marboles.mvvm.viewModels.LevelStatus
 import com.example.marboles.mvvm.viewModels.LevelViewModel
 import com.example.marboles.mvvm.viewModels.ScoreGameViewModel

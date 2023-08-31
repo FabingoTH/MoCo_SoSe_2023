@@ -4,7 +4,6 @@ import android.content.Context
 import android.hardware.SensorManager
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.marboles.GameState
 import com.example.marboles.mvvm.Models.SensorModel

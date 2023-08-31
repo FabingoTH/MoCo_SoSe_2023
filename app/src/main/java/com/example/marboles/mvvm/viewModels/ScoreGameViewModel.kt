@@ -1,6 +1,5 @@
 package com.example.marboles.mvvm.viewModels
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
