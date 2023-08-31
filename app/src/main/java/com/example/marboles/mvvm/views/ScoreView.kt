@@ -22,24 +22,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ScoreView(scoreViewModel: ScoreGameViewModel, levelId: Int) {
-
-    val coroutineScope = rememberCoroutineScope()
-
-    //val highscoreList: List<Highscore>? by scoreViewModel.highscores.observeAsState()
     val highscoreListForLevel: List<HighscoreEntry>? by scoreViewModel.highscoresForLevel.observeAsState()
-
-    Button(
-        modifier = Modifier
-            .offset(80.dp, 80.dp)
-            .zIndex(1f),
-        onClick = {
-            coroutineScope.launch {
-                scoreViewModel.deleteAllHighscores(1) // button nur für testing - oder wollen wir diese funktionalität beibehalten?
-            }
-        }
-    ) {
-        Text(text = "Alle löschen", fontSize = 20.sp)
-    }
 
     Row(
         modifier = Modifier
@@ -84,13 +67,6 @@ fun ScoreView(scoreViewModel: ScoreGameViewModel, levelId: Int) {
                                 ScoreEntry(datum = element.date, score = scoreViewModel.formatTimer(element.score))
                             }
                         }
-                    }
-                    Button(
-                        onClick = {
-                            scoreViewModel.addHighscoreForLevel(levelId)
-                        }
-                    ) {
-                        Text(text = "Add Highscore")
                     }
                 }
             }
